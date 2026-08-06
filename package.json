@@ -17,6 +17,8 @@
     "@angular/forms": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "@fortawesome/angular-fontawesome": "^5.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.3.0",
     "@ng-select/ng-select": "^23.5.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@tanstack/angular-query-experimental": "^5.101.4",

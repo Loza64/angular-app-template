@@ -163,9 +163,11 @@
 }
 
 .outlet {
-  flex: 1;
+
   overflow-y: auto;
   padding: 24px;
+  max-height: 92vh;
+  width: 100%;
 }
 
 @media (max-width: 900px) {
