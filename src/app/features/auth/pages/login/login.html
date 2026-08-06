@@ -1,0 +1,49 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="auth-brand-mark">A</span>
+      <span class="auth-brand-name">Admin Panel</span>
+    </div>
+
+    <h1 class="auth-title">Inicia sesión</h1>
+    <p class="auth-subtitle">Ingresa tus credenciales para continuar</p>
+
+    <form class="form-grid" (ngSubmit)="submit()">
+      <div class="form-field">
+        <label for="username">Usuario</label>
+        <input
+          id="username"
+          type="text"
+          [ngModel]="username()"
+          (ngModelChange)="username.set($event)"
+          name="username"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      @if (error()) {
+        <span class="form-error">{{ error() }}</span>
+      }
+
+      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading()">
+        {{ loading() ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <p class="auth-footer">¿No tienes cuenta? <a routerLink="/signup">Crear cuenta</a></p>
+  </div>
+</div>

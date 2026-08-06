@@ -6,6 +6,14 @@ import { SessionResponse } from '../../../sdk/responses/session-response.model';
 import { User } from '../../users/models/user.model';
 import { SdkSettingsService } from '../../../core/services/sdk-settings';
 
+export interface SignUpPayload {
+  username: string;
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
@@ -17,6 +25,12 @@ export class AuthService {
 
   login(username: string, password: string): Observable<SessionResponse> {
     return this.http.post<SessionResponse>(`${this.baseUrl}/login`, { username, password }).pipe(
+      tap((res) => this.setSession(res)),
+    );
+  }
+
+  signup(payload: SignUpPayload): Observable<SessionResponse> {
+    return this.http.post<SessionResponse>(`${this.baseUrl}/signup`, payload).pipe(
       tap((res) => this.setSession(res)),
     );
   }

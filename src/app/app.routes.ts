@@ -1,7 +1,20 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { guestGuard } from './core/guards/guest-guard';
 
 export const routes: Routes = [
+  {
+    path: 'login',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/pages/login/login').then((m) => m.LoginPage),
+  },
+  {
+    path: 'signup',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/pages/signup/signup').then((m) => m.SignupPage),
+  },
+
+  // Panel protegido.
   {
     path: 'dashboard',
     canActivate: [authGuard],
@@ -23,5 +36,7 @@ export const routes: Routes = [
       },
     ],
   },
+
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '**', redirectTo: 'dashboard' },
 ];
