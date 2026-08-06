@@ -1,0 +1,52 @@
+<div class="shell">
+  <aside class="sidebar" [class.sidebar-open]="sidebarOpen()">
+    <div class="sidebar-brand">
+      <span class="sidebar-brand-mark">A</span>
+      <span class="sidebar-brand-name">Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menu; track item.route) {
+        <a
+          class="sidebar-link"
+          [routerLink]="item.route"
+          routerLinkActive="sidebar-link-active"
+          (click)="closeSidebar()"
+        >
+          <app-icon [name]="item.icon" [size]="18" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="sidebar-logout" (click)="logout()">
+      <app-icon name="logout" [size]="18" />
+      <span>Cerrar sesión</span>
+    </button>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+  }
+
+  <div class="content">
+    <header class="topbar">
+      <button type="button" class="topbar-menu-btn" (click)="toggleSidebar()" aria-label="Abrir menú">
+        <app-icon name="menu" [size]="20" />
+      </button>
+
+      <h1 class="topbar-title">{{ pageTitle() }}</h1>
+
+      @if (currentUser(); as user) {
+        <div class="topbar-user">
+          <span class="topbar-user-avatar">{{ user.username.charAt(0).toUpperCase() }}</span>
+          <span class="topbar-user-name">{{ user.username }}</span>
+        </div>
+      }
+    </header>
+
+    <main class="outlet">
+      <router-outlet />
+    </main>
+  </div>
+</div>

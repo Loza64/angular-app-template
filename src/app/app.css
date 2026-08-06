@@ -1,0 +1,37 @@
+:host {
+  display: block;
+
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-muted: #f0f1f4;
+  --border: #e3e5ea;
+  --text: #1a1d24;
+  --text-muted: #6b7280;
+
+  --primary: #4338ca;
+  --primary-hover: #372ea8;
+  --primary-soft: #eef0fd;
+
+  --danger: #dc2626;
+  --danger-soft: #fdeded;
+  --success: #16794f;
+  --success-soft: #e7f6ee;
+  --warning: #b45309;
+  --warning-soft: #fdf3e3;
+
+  --sidebar-bg: #14161f;
+  --sidebar-text: #b7bac6;
+  --sidebar-text-active: #ffffff;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
