@@ -1,72 +1,66 @@
-<div class="page">
-  <div class="toolbar">
-    <div class="search-box">
-      <app-icon name="search" [size]="16" />
-      <input type="text" placeholder="Buscar roles..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
-    </div>
-
-    <label class="checkbox-label">
-      <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
-      Mostrar eliminados
-    </label>
-
-    <span class="toolbar-spacer"></span>
-
-    <button type="button" class="btn btn-primary" (click)="openCreate()">
-      <app-icon name="plus" [size]="16" />
-      Nuevo rol
-    </button>
+<div class="toolbar">
+  <div class="search-box">
+    <app-icon name="search" [size]="16" />
+    <input type="text" placeholder="Buscar roles..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
   </div>
 
-  <app-table
-    [loading]="rolesQuery.isLoading()"
-    [empty]="roles().length === 0"
-    emptyText="No se encontraron roles."
-    [pagination]="pagination()"
-    (pageChange)="goToPage($event)"
-  >
-    <ng-container header>
-      <th>Nombre</th>
-      <th>Permisos</th>
-      <th>Estado</th>
-      <th></th>
-    </ng-container>
+  <label class="checkbox-label">
+    <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
+    Mostrar eliminados
+  </label>
 
-    <ng-container body>
-      @for (role of roles(); track role.id) {
-        <tr>
-          <td>{{ role.name }}</td>
-          <td>{{ role.permissions?.length ?? 0 }} permisos</td>
-          <td>
-            @if (role.deletedAt) {
-              <span class="badge badge-neutral">Eliminado</span>
-            } @else if (role.active) {
-              <span class="badge badge-success">Activo</span>
-            } @else {
-              <span class="badge badge-danger">Inactivo</span>
-            }
-          </td>
-          <td>
-            <div class="row-actions">
-              @if (role.deletedAt) {
-                <button type="button" class="icon-btn icon-btn-success" (click)="restore(role)" title="Restaurar">
-                  <app-icon name="restore" [size]="15" />
-                </button>
-              } @else {
-                <button type="button" class="icon-btn" (click)="openEdit(role)" title="Editar">
-                  <app-icon name="edit" [size]="15" />
-                </button>
-                <button type="button" class="icon-btn icon-btn-danger" (click)="remove(role)" title="Eliminar">
-                  <app-icon name="trash" [size]="15" />
-                </button>
-              }
-            </div>
-          </td>
-        </tr>
-      }
-    </ng-container>
-  </app-table>
+  <span class="toolbar-spacer"></span>
+
+  <button type="button" class="btn btn-primary" (click)="openCreate()">
+    <app-icon name="plus" [size]="16" />
+    Nuevo rol
+  </button>
 </div>
+
+<app-table [loading]="rolesQuery.isLoading()" [empty]="roles().length === 0" emptyText="No se encontraron roles."
+  [pagination]="pagination()" (pageChange)="goToPage($event)">
+  <ng-container header>
+    <th>Nombre</th>
+    <th>Permisos</th>
+    <th>Estado</th>
+    <th></th>
+  </ng-container>
+
+  <ng-container body>
+    @for (role of roles(); track role.id) {
+    <tr>
+      <td>{{ role.name }}</td>
+      <td>{{ role.permissions?.length ?? 0 }} permisos</td>
+      <td>
+        @if (role.deletedAt) {
+        <span class="badge badge-neutral">Eliminado</span>
+        } @else if (role.active) {
+        <span class="badge badge-success">Activo</span>
+        } @else {
+        <span class="badge badge-danger">Inactivo</span>
+        }
+      </td>
+      <td>
+        <div class="row-actions">
+          @if (role.deletedAt) {
+          <button type="button" class="icon-btn icon-btn-success" (click)="restore(role)" title="Restaurar">
+            <app-icon name="restore" [size]="15" />
+          </button>
+          } @else {
+          <button type="button" class="icon-btn" (click)="openEdit(role)" title="Editar">
+            <app-icon name="edit" [size]="15" />
+          </button>
+          <button type="button" class="icon-btn icon-btn-danger" (click)="remove(role)" title="Eliminar">
+            <app-icon name="trash" [size]="15" />
+          </button>
+          }
+        </div>
+      </td>
+    </tr>
+    }
+  </ng-container>
+</app-table>
+
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar rol' : 'Nuevo rol'" (closed)="closeModal()">
   <form class="form-grid" (ngSubmit)="submit()">

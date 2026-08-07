@@ -1,76 +1,69 @@
-<div class="page">
-  <div class="toolbar">
-    <div class="search-box">
-      <app-icon name="search" [size]="16" />
-      <input type="text" placeholder="Buscar usuarios..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
-    </div>
-
-    <label class="checkbox-label">
-      <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
-      Mostrar eliminados
-    </label>
-
-    <span class="toolbar-spacer"></span>
-
-    <button type="button" class="btn btn-primary" (click)="openCreate()">
-      <app-icon name="plus" [size]="16" />
-      Nuevo usuario
-    </button>
+<div class="toolbar">
+  <div class="search-box">
+    <app-icon name="search" [size]="16" />
+    <input type="text" placeholder="Buscar usuarios..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
   </div>
 
-  <app-table
-    [loading]="usersQuery.isLoading()"
-    [empty]="users().length === 0"
-    emptyText="No se encontraron usuarios."
-    [pagination]="pagination()"
-    (pageChange)="goToPage($event)"
-  >
-    <ng-container header>
-      <th>Usuario</th>
-      <th>Nombre</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Estado</th>
-      <th></th>
-    </ng-container>
+  <label class="checkbox-label">
+    <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
+    Mostrar eliminados
+  </label>
 
-    <ng-container body>
-      @for (user of users(); track user.id) {
-        <tr>
-          <td>{{ user.username }}</td>
-          <td>{{ user.name }} {{ user.surname }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role?.name ?? '—' }}</td>
-          <td>
-            @if (user.deletedAt) {
-              <span class="badge badge-neutral">Eliminado</span>
-            } @else if (user.blocked) {
-              <span class="badge badge-danger">Bloqueado</span>
-            } @else {
-              <span class="badge badge-success">Activo</span>
-            }
-          </td>
-          <td>
-            <div class="row-actions">
-              @if (user.deletedAt) {
-                <button type="button" class="icon-btn icon-btn-success" (click)="restore(user)" title="Restaurar">
-                  <app-icon name="restore" [size]="15" />
-                </button>
-              } @else {
-                <button type="button" class="icon-btn" (click)="openEdit(user)" title="Editar">
-                  <app-icon name="edit" [size]="15" />
-                </button>
-                <button type="button" class="icon-btn icon-btn-danger" (click)="remove(user)" title="Eliminar">
-                  <app-icon name="trash" [size]="15" />
-                </button>
-              }
-            </div>
-          </td>
-        </tr>
-      }
-    </ng-container>
-  </app-table>
+  <span class="toolbar-spacer"></span>
+
+  <button type="button" class="btn btn-primary" (click)="openCreate()">
+    <app-icon name="plus" [size]="16" />
+    Nuevo usuario
+  </button>
 </div>
+
+<app-table [loading]="usersQuery.isLoading()" [empty]="users().length === 0" emptyText="No se encontraron usuarios."
+  [pagination]="pagination()" (pageChange)="goToPage($event)">
+  <ng-container header>
+    <th>Usuario</th>
+    <th>Nombre</th>
+    <th>Email</th>
+    <th>Rol</th>
+    <th>Estado</th>
+    <th></th>
+  </ng-container>
+
+  <ng-container body>
+    @for (user of users(); track user.id) {
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.name }} {{ user.surname }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.role?.name ?? '—' }}</td>
+      <td>
+        @if (user.deletedAt) {
+        <span class="badge badge-neutral">Eliminado</span>
+        } @else if (user.blocked) {
+        <span class="badge badge-danger">Bloqueado</span>
+        } @else {
+        <span class="badge badge-success">Activo</span>
+        }
+      </td>
+      <td>
+        <div class="row-actions">
+          @if (user.deletedAt) {
+          <button type="button" class="icon-btn icon-btn-success" (click)="restore(user)" title="Restaurar">
+            <app-icon name="restore" [size]="15" />
+          </button>
+          } @else {
+          <button type="button" class="icon-btn" (click)="openEdit(user)" title="Editar">
+            <app-icon name="edit" [size]="15" />
+          </button>
+          <button type="button" class="icon-btn icon-btn-danger" (click)="remove(user)" title="Eliminar">
+            <app-icon name="trash" [size]="15" />
+          </button>
+          }
+        </div>
+      </td>
+    </tr>
+    }
+  </ng-container>
+</app-table>
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar usuario' : 'Nuevo usuario'" (closed)="closeModal()">
   <form class="form-grid" (ngSubmit)="submit()">
