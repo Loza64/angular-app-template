@@ -1,24 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { QueryClient, injectMutation } from '@tanstack/angular-query-experimental';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
+import { Table } from '../../../core/shared/components/table/table';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
+import { injectCrud } from '../../../core/composables/inject-crud';
 import { PermissionService } from '../services/permission';
 import { Permission } from '../models/permission.model';
 
 @Component({
   selector: 'app-permissions-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, Modal],
+  imports: [CommonModule, FormsModule, Icon, Modal, Table],
   templateUrl: './permissions-list.html',
   styleUrls: ['./permissions-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsList {
   private permissionService = inject(PermissionService);
-  private queryClient = inject(QueryClient);
 
   protected search = signal('');
   protected page = signal(1);
@@ -37,30 +37,20 @@ export class PermissionsList {
   });
 
   protected permissions = computed(() => this.permissionsQuery.data()?.data ?? []);
-  protected pagination = computed(() => this.permissionsQuery.data()?.pagination);
+  protected pagination = computed(() => {
+    const p = this.permissionsQuery.data()?.pagination;
+    return p ? { ...p, itemsLabel: 'permisos' } : null;
+  });
+
+  // Solo se puede listar y actualizar el título: no hay creación ni eliminación de permisos,
+  // ya que se generan automáticamente escaneando los endpoints del backend.
+  protected crud = injectCrud<Permission>(signal(this.permissionService), { queryKey: 'permissions' });
+  protected saving = this.crud.isUpdating;
 
   protected modalOpen = signal(false);
   protected editingPermission = signal<Permission | null>(null);
   protected titleValue = signal('');
   protected formError = signal<string | null>(null);
-
-  private saveMutation = injectMutation(() => ({
-    mutationFn: () => {
-      const permission = this.editingPermission();
-      if (!permission) return Promise.reject(new Error('No hay permiso seleccionado'));
-      return this.permissionService.update({
-        id: permission.id!,
-        payload: { title: this.titleValue() },
-      });
-    },
-    onSuccess: () => {
-      this.queryClient.invalidateQueries({ queryKey: ['permissions'] });
-      this.closeModal();
-    },
-    onError: () => this.formError.set('No se pudo actualizar el permiso. Intenta de nuevo.'),
-  }));
-
-  protected saving = this.saveMutation.isPending;
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -80,7 +70,13 @@ export class PermissionsList {
 
   submit(): void {
     this.formError.set(null);
-    this.saveMutation.mutate();
+    const permission = this.editingPermission();
+    if (!permission) return;
+
+    this.crud
+      .update({ id: permission.id!, payload: { title: this.titleValue() } })
+      .then(() => this.closeModal())
+      .catch(() => this.formError.set('No se pudo actualizar el permiso. Intenta de nuevo.'));
   }
 
   goToPage(page: number): void {

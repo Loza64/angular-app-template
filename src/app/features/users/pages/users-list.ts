@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { QueryClient, injectMutation } from '@tanstack/angular-query-experimental';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { SelectApi } from '../../../core/shared/components/select-api/select-api';
+import { Table } from '../../../core/shared/components/table/table';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
+import { injectCrud } from '../../../core/composables/inject-crud';
 import { UserService } from '../services/user';
 import { RoleService } from '../../roles/services/role';
 import { User } from '../models/user.model';
@@ -34,7 +35,7 @@ const EMPTY_FORM: UserFormValue = {
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, Modal, SelectApi],
+  imports: [CommonModule, FormsModule, Icon, Modal, SelectApi, Table],
   templateUrl: './users-list.html',
   styleUrls: ['./users-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,7 +43,6 @@ const EMPTY_FORM: UserFormValue = {
 export class UsersList {
   private userService = inject(UserService);
   protected roleService = signal(inject(RoleService));
-  private queryClient = inject(QueryClient);
 
   protected search = signal('');
   protected page = signal(1);
@@ -63,49 +63,18 @@ export class UsersList {
   });
 
   protected users = computed(() => this.usersQuery.data()?.data ?? []);
-  protected pagination = computed(() => this.usersQuery.data()?.pagination);
+  protected pagination = computed(() => {
+    const p = this.usersQuery.data()?.pagination;
+    return p ? { ...p, itemsLabel: 'usuarios' } : null;
+  });
+
+  protected crud = injectCrud<User>(signal(this.userService), { queryKey: 'users' });
+  protected saving = computed(() => this.crud.isCreating() || this.crud.isUpdating());
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
   protected form = signal<UserFormValue>({ ...EMPTY_FORM });
   protected formError = signal<string | null>(null);
-
-  private saveMutation = injectMutation(() => ({
-    mutationFn: async () => {
-      const value = this.form();
-      const payload: Partial<User> & { password?: string } = {
-        username: value.username,
-        name: value.name,
-        surname: value.surname,
-        email: value.email,
-        blocked: value.blocked,
-        role: value.role ? ({ id: value.role.id } as Role) : undefined,
-      };
-      if (!this.editingId() && value.password) payload.password = value.password;
-
-      const id = this.editingId();
-      return id
-        ? this.userService.update({ id, payload })
-        : this.userService.create({ payload: payload as User });
-    },
-    onSuccess: () => {
-      this.queryClient.invalidateQueries({ queryKey: ['users'] });
-      this.closeModal();
-    },
-    onError: () => this.formError.set('No se pudo guardar el usuario. Revisa los datos e intenta de nuevo.'),
-  }));
-
-  private deleteMutation = injectMutation(() => ({
-    mutationFn: (id: string | number) => this.userService.delete({ id }),
-    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['users'] }),
-  }));
-
-  private restoreMutation = injectMutation(() => ({
-    mutationFn: (id: string | number) => this.userService.restore({ id }),
-    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['users'] }),
-  }));
-
-  protected saving = this.saveMutation.isPending;
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -140,16 +109,34 @@ export class UsersList {
 
   submit(): void {
     this.formError.set(null);
-    this.saveMutation.mutate();
+    const value = this.form();
+    const payload: Partial<User> & { password?: string } = {
+      username: value.username,
+      name: value.name,
+      surname: value.surname,
+      email: value.email,
+      blocked: value.blocked,
+      role: value.role ? ({ id: value.role.id } as Role) : undefined,
+    };
+    if (!this.editingId() && value.password) payload.password = value.password;
+
+    const id = this.editingId();
+    const request = id
+      ? this.crud.update({ id, payload })
+      : this.crud.create({ payload: payload as User });
+
+    request
+      .then(() => this.closeModal())
+      .catch(() => this.formError.set('No se pudo guardar el usuario. Revisa los datos e intenta de nuevo.'));
   }
 
   remove(user: User): void {
     if (!confirm(`¿Eliminar al usuario "${user.username}"?`)) return;
-    this.deleteMutation.mutate(user.id!);
+    this.crud.delete({ id: user.id! });
   }
 
   restore(user: User): void {
-    this.restoreMutation.mutate(user.id!);
+    this.crud.restore({ id: user.id! });
   }
 
   updateForm<K extends keyof UserFormValue>(key: K, value: UserFormValue[K]): void {

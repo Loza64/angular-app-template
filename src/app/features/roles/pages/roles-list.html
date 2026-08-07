@@ -18,75 +18,54 @@
     </button>
   </div>
 
-  <div class="table-card">
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Permisos</th>
-            <th>Estado</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (role of roles(); track role.id) {
-          <tr>
-            <td>{{ role.name }}</td>
-            <td>{{ role.permissions?.length ?? 0 }} permisos</td>
-            <td>
-              @if (role.deletedAt) {
+  <app-table
+    [loading]="rolesQuery.isLoading()"
+    [empty]="roles().length === 0"
+    emptyText="No se encontraron roles."
+    [pagination]="pagination()"
+    (pageChange)="goToPage($event)"
+  >
+    <ng-container header>
+      <th>Nombre</th>
+      <th>Permisos</th>
+      <th>Estado</th>
+      <th></th>
+    </ng-container>
+
+    <ng-container body>
+      @for (role of roles(); track role.id) {
+        <tr>
+          <td>{{ role.name }}</td>
+          <td>{{ role.permissions?.length ?? 0 }} permisos</td>
+          <td>
+            @if (role.deletedAt) {
               <span class="badge badge-neutral">Eliminado</span>
-              } @else if (role.active) {
+            } @else if (role.active) {
               <span class="badge badge-success">Activo</span>
-              } @else {
+            } @else {
               <span class="badge badge-danger">Inactivo</span>
-              }
-            </td>
-            <td>
-              <div class="row-actions">
-                @if (role.deletedAt) {
+            }
+          </td>
+          <td>
+            <div class="row-actions">
+              @if (role.deletedAt) {
                 <button type="button" class="icon-btn icon-btn-success" (click)="restore(role)" title="Restaurar">
                   <app-icon name="restore" [size]="15" />
                 </button>
-                } @else {
+              } @else {
                 <button type="button" class="icon-btn" (click)="openEdit(role)" title="Editar">
                   <app-icon name="edit" [size]="15" />
                 </button>
                 <button type="button" class="icon-btn icon-btn-danger" (click)="remove(role)" title="Eliminar">
                   <app-icon name="trash" [size]="15" />
                 </button>
-                }
-              </div>
-            </td>
-          </tr>
-          } @empty {
-          <tr>
-            <td colspan="4" class="empty-state">
-              @if (rolesQuery.isLoading()) {
-              Cargando roles...
-              } @else {
-              No se encontraron roles.
               }
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
-    @if (pagination(); as p) {
-    <div class="pagination">
-      <span>Página {{ p.page }} de {{ p.pageCount || 1 }} · {{ p.total }} roles</span>
-      <button type="button" class="icon-btn" [disabled]="p.page <= 1" (click)="goToPage(p.page - 1)">
-        <app-icon name="chevron-left" [size]="14" />
-      </button>
-      <button type="button" class="icon-btn" [disabled]="p.page >= p.pageCount" (click)="goToPage(p.page + 1)">
-        <app-icon name="chevron-left" [size]="14" style="transform: rotate(180deg)" />
-      </button>
-    </div>
-    }
-  </div>
+            </div>
+          </td>
+        </tr>
+      }
+    </ng-container>
+  </app-table>
 </div>
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar rol' : 'Nuevo rol'" (closed)="closeModal()">

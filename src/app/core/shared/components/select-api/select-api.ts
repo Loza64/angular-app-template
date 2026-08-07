@@ -19,7 +19,7 @@ import { Service } from '../../../../sdk/service';
 })
 export class SelectApi<T extends BaseEntity> {
   service = input.required<Service<T>>();
-  queryKey = input.required<string | string[]>();
+  queryKey = input<string | string[]>([]);
   querySearch = input<(search: string) => Record<string, unknown>>();
   queryParams = input<Record<string, unknown>>({});
   placeholder = input('Selecciona...');
@@ -31,10 +31,7 @@ export class SelectApi<T extends BaseEntity> {
   private search = signal('');
   private searchTerms = new Subject<string>();
 
-  // finalQueryKey ya distingue por término de búsqueda (se serializa dentro de queryParams).
-  private key = computed(() =>
-    Array.isArray(this.queryKey()) ? (this.queryKey() as string[]) : [this.queryKey() as string],
-  );
+  private key = computed(() => Array.isArray(this.queryKey()) ? (this.queryKey() as string[]) : [this.queryKey() as string]);
 
   private params = computed<Record<string, unknown>>(() => ({
     ...(this.querySearch()?.(this.search()) ?? {}),

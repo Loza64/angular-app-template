@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { QueryClient, injectMutation } from '@tanstack/angular-query-experimental';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
+import { Table } from '../../../core/shared/components/table/table';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
+import { injectCrud } from '../../../core/composables/inject-crud';
 import { RoleService } from '../services/role';
 import { PermissionService } from '../../permissions/services/permission';
 import { Role } from '../models/role.model';
@@ -26,7 +27,7 @@ const EMPTY_FORM: RoleFormValue = {
 @Component({
   selector: 'app-roles-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgSelectModule, Icon, Modal],
+  imports: [CommonModule, FormsModule, NgSelectModule, Icon, Modal, Table],
   templateUrl: './roles-list.html',
   styleUrls: ['./roles-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +35,6 @@ const EMPTY_FORM: RoleFormValue = {
 export class RolesList {
   private roleService = inject(RoleService);
   private permissionService = inject(PermissionService);
-  private queryClient = inject(QueryClient);
 
   protected search = signal('');
   protected page = signal(1);
@@ -55,8 +55,17 @@ export class RolesList {
   });
 
   protected roles = computed(() => this.rolesQuery.data()?.data ?? []);
-  protected pagination = computed(() => this.rolesQuery.data()?.pagination);
+  protected pagination = computed(() => {
+    const p = this.rolesQuery.data()?.pagination;
+    return p ? { ...p, itemsLabel: 'roles' } : null;
+  });
 
+  protected modalOpen = signal(false);
+  protected editingId = signal<string | number | null>(null);
+  protected form = signal<RoleFormValue>({ ...EMPTY_FORM });
+  protected formError = signal<string | null>(null);
+
+  // Opciones de permisos para el multi-select del formulario (se cargan una sola vez al abrir el modal).
   protected permissionsOptionsQuery = injectFindAll<Permission>({
     service: signal(this.permissionService),
     queryKey: signal(['permissions-options']),
@@ -65,43 +74,8 @@ export class RolesList {
   });
   protected permissionOptions = computed(() => this.permissionsOptionsQuery.data()?.data ?? []);
 
-  protected modalOpen = signal(false);
-  protected editingId = signal<string | number | null>(null);
-  protected form = signal<RoleFormValue>({ ...EMPTY_FORM });
-  protected formError = signal<string | null>(null);
-
-  private saveMutation = injectMutation(() => ({
-    mutationFn: async () => {
-      const value = this.form();
-      const payload: Partial<Role> = {
-        name: value.name,
-        active: value.active,
-        permissions: value.permissions,
-      };
-
-      const id = this.editingId();
-      return id
-        ? this.roleService.update({ id, payload })
-        : this.roleService.create({ payload: payload as Role });
-    },
-    onSuccess: () => {
-      this.queryClient.invalidateQueries({ queryKey: ['roles'] });
-      this.closeModal();
-    },
-    onError: () => this.formError.set('No se pudo guardar el rol. Revisa los datos e intenta de nuevo.'),
-  }));
-
-  private deleteMutation = injectMutation(() => ({
-    mutationFn: (id: string | number) => this.roleService.delete({ id }),
-    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['roles'] }),
-  }));
-
-  private restoreMutation = injectMutation(() => ({
-    mutationFn: (id: string | number) => this.roleService.restore({ id }),
-    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['roles'] }),
-  }));
-
-  protected saving = this.saveMutation.isPending;
+  protected crud = injectCrud<Role>(signal(this.roleService), { queryKey: 'roles' });
+  protected saving = computed(() => this.crud.isCreating() || this.crud.isUpdating());
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -132,16 +106,30 @@ export class RolesList {
 
   submit(): void {
     this.formError.set(null);
-    this.saveMutation.mutate();
+    const value = this.form();
+    const payload: Partial<Role> = {
+      name: value.name,
+      active: value.active,
+      permissions: value.permissions,
+    };
+
+    const id = this.editingId();
+    const request = id
+      ? this.crud.update({ id, payload })
+      : this.crud.create({ payload: payload as Role });
+
+    request
+      .then(() => this.closeModal())
+      .catch(() => this.formError.set('No se pudo guardar el rol. Revisa los datos e intenta de nuevo.'));
   }
 
   remove(role: Role): void {
     if (!confirm(`¿Eliminar el rol "${role.name}"?`)) return;
-    this.deleteMutation.mutate(role.id!);
+    this.crud.delete({ id: role.id! });
   }
 
   restore(role: Role): void {
-    this.restoreMutation.mutate(role.id!);
+    this.crud.restore({ id: role.id! });
   }
 
   updateForm<K extends keyof RoleFormValue>(key: K, value: RoleFormValue[K]): void {

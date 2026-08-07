@@ -1,1 +1,5 @@
-<router-outlet />
+@if (bootstrapping()) {
+  <div class="app-bootstrap">Cargando sesión...</div>
+} @else {
+  <router-outlet />
+}
