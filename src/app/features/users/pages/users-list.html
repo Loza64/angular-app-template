@@ -100,8 +100,8 @@
 
     <div class="form-field">
       <label>Rol</label>
-      <app-select-api [service]="roleService()" queryKey="roles-select" [value]="form().role"
-        (valueChange)="updateForm('role', $event)" placeholder="Selecciona un rol" />
+      <app-select-api [service]="roleService" queryKey="roles-select" [value]="form().role"
+        (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
     </div>
 
     <label class="form-toggle">

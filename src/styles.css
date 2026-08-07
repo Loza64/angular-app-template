@@ -1,1 +1,58 @@
 @import "tailwindcss";
+
+/* ============================================================
+   ng-select — panel del dropdown (global, fuera de encapsulación)
+   ============================================================ */
+.ant-select-skin-panel {
+  position: absolute !important;
+  z-index: 1050;
+  background-color: #ffffff !important;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 4px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.ant-select-skin-panel .ng-dropdown-panel-items {
+  padding: 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.ant-select-skin-panel .ng-option {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.88);
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ant-select-skin-panel .ng-option.ng-option-marked {
+  background-color: #f5f5f5;
+}
+
+.ant-select-skin-panel .ng-option.ng-option-selected,
+.ant-select-skin-panel .ng-option.ng-option-selected.ng-option-marked {
+  background-color: #e6f4ff;
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 600;
+}
+
+.ant-select-skin-panel .ng-option-disabled {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: not-allowed;
+}
+
+.ant-select-skin-panel .ng-notfound {
+  color: rgba(0, 0, 0, 0.25);
+  padding: 8px 12px;
+  font-size: 14px;
+  text-align: center;
+}

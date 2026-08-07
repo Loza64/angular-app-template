@@ -1,11 +1,11 @@
 <div class="toolbar">
   <div class="search-box">
     <app-icon name="search" [size]="16" />
-    <input type="text" placeholder="Buscar roles..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
+    <input type="text" placeholder="Buscar roles..." [value]="search()" (input)="onSearch($event.target.value)" />
   </div>
 
   <label class="checkbox-label">
-    <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
+    <input type="checkbox" [checked]="deleted()" (change)="deleted.set($event.target.checked)" />
     Mostrar eliminados
   </label>
 
@@ -61,32 +61,33 @@
   </ng-container>
 </app-table>
 
-
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar rol' : 'Nuevo rol'" (closed)="closeModal()">
-  <form class="form-grid" (ngSubmit)="submit()">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+
+    @if (editRoleQuery.isLoading() && editingId()) {
+    <div class="form-loading-state">Cargando datos del rol...</div>
+    } @else {
     <div class="form-field">
       <label for="role-name">Nombre</label>
-      <input id="role-name" type="text" [ngModel]="form().name" (ngModelChange)="updateForm('name', $event)" name="name"
-        required />
+      <input id="role-name" type="text" formControlName="name" required />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+      <span class="form-error">El nombre es obligatorio.</span>
+      }
     </div>
 
     <div class="form-field">
       <label>Permisos</label>
-      <ng-select [items]="permissionOptions()" [ngModel]="form().permissions"
-        (ngModelChange)="updateForm('permissions', $event)" [compareWith]="comparePermissions" [multiple]="true"
-        [loading]="permissionsOptionsQuery.isFetching()" placeholder="Selecciona permisos"
-        notFoundText="No se encontraron permisos" bindLabel="title">
-        <ng-template ng-option-tmp let-item="item">
-          <span class="badge badge-neutral">{{ item.method }}</span>
-          {{ item.title }} <span class="hint">{{ item.path }}</span>
-        </ng-template>
-      </ng-select>
+      <app-select-multiple-api [service]="permissionService" queryKey="permissions-select"
+        [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value"
+        (valueChange)="onPermissionsChange($event)" placeholder="Selecciona permisos"
+        notFoundText="No se encontraron permisos" />
     </div>
 
     <label class="form-toggle">
-      <input type="checkbox" [ngModel]="form().active" (ngModelChange)="updateForm('active', $event)" name="active" />
+      <input type="checkbox" formControlName="active" />
       Rol activo
     </label>
+    }
 
     @if (formError()) {
     <span class="form-error">{{ formError() }}</span>
@@ -94,7 +95,8 @@
 
     <div class="form-actions">
       <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      <button type="submit" class="btn btn-primary"
+        [disabled]="saving() || form.invalid || (editRoleQuery.isLoading() && !!editingId())">
         {{ saving() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>

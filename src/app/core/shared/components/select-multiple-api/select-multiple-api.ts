@@ -10,7 +10,7 @@ import { injectFindAll } from '../../../composables/inject-find-all';
 import { Service } from '../../../../sdk/service';
 
 @Component({
-  selector: 'app-select-api',
+  selector: 'app-select-multiple-api',
   standalone: true,
   imports: [CommonModule, FormsModule, NgSelectModule],
   template: `
@@ -18,8 +18,9 @@ import { Service } from '../../../../sdk/service';
       class="ant-select-skin"
       dropdownClass="ant-select-skin-panel"
       [items]="options()"
-      [multiple]="false"
-      [closeOnSelect]="true"
+      [multiple]="true"
+      [closeOnSelect]="false"
+      [hideSelected]="false"
       [ngModel]="value()"
       (ngModelChange)="value.set($event)"
       [compareWith]="compareById"
@@ -43,10 +44,10 @@ import { Service } from '../../../../sdk/service';
       <small class="select-api-error">No se pudo cargar la lista. Intenta nuevamente.</small>
     }
   `,
-  styleUrl: './select-api.css',
+  styleUrl: './select-multiple-api.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectApi<T extends BaseEntity> {
+export class SelectMultipleApi<T extends BaseEntity> {
   service = input.required<Service<T>>();
   queryKey = input<string | string[]>([]);
   querySearch = input<(search: string) => Record<string, unknown>>();
@@ -55,7 +56,7 @@ export class SelectApi<T extends BaseEntity> {
   notFoundText = input('No se encontraron resultados');
   renderOption = input<(item: T) => string>();
 
-  value = model<T | null>(null);
+  value = model<T[]>([]);
   loaded = signal(false);
   private search = signal('');
   private searchTerms = new Subject<string>();

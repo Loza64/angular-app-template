@@ -42,7 +42,7 @@ const EMPTY_FORM: UserFormValue = {
 })
 export class UsersList {
   private userService = inject(UserService);
-  protected roleService = signal(inject(RoleService));
+  protected roleService = inject(RoleService);
 
   protected search = signal('');
   protected page = signal(1);
@@ -141,6 +141,11 @@ export class UsersList {
 
   updateForm<K extends keyof UserFormValue>(key: K, value: UserFormValue[K]): void {
     this.form.update((current) => ({ ...current, [key]: value }));
+  }
+
+  onRoleChange(value: Role | Role[] | null): void {
+    const role = Array.isArray(value) ? (value[0] ?? null) : value;
+    this.updateForm('role', role);
   }
 
   goToPage(page: number): void {

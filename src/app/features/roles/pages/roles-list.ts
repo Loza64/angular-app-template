@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { Table } from '../../../core/shared/components/table/table';
@@ -11,30 +10,20 @@ import { RoleService } from '../services/role';
 import { PermissionService } from '../../permissions/services/permission';
 import { Role } from '../models/role.model';
 import { Permission } from '../../permissions/models/permission.model';
-
-type RoleFormValue = {
-  name: string;
-  active: boolean;
-  permissions: Permission[];
-};
-
-const EMPTY_FORM: RoleFormValue = {
-  name: '',
-  active: true,
-  permissions: [],
-};
+import { SelectMultipleApi } from "../../../core/shared/components/select-multiple-api/select-multiple-api";
 
 @Component({
   selector: 'app-roles-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgSelectModule, Icon, Modal, Table],
+  imports: [CommonModule, ReactiveFormsModule, Icon, Modal, Table, SelectMultipleApi],
   templateUrl: './roles-list.html',
   styleUrls: ['./roles-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesList {
+  private fb = inject(FormBuilder);
   private roleService = inject(RoleService);
-  private permissionService = inject(PermissionService);
+  protected permissionService = inject(PermissionService);
 
   protected search = signal('');
   protected page = signal(1);
@@ -62,20 +51,35 @@ export class RolesList {
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
-  protected form = signal<RoleFormValue>({ ...EMPTY_FORM });
   protected formError = signal<string | null>(null);
 
-  // Opciones de permisos para el multi-select del formulario (se cargan una sola vez al abrir el modal).
-  protected permissionsOptionsQuery = injectFindAll<Permission>({
-    service: signal(this.permissionService),
-    queryKey: signal(['permissions-options']),
-    queryParams: signal({ pageSize: 200 }),
-    enabled: computed(() => this.modalOpen()),
+  // Definición del FormGroup con validaciones nativas
+  protected form: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    active: [true],
+    permissions: [[]],
   });
-  protected permissionOptions = computed(() => this.permissionsOptionsQuery.data()?.data ?? []);
 
   protected crud = injectCrud<Role>(signal(this.roleService), { queryKey: 'roles' });
   protected saving = computed(() => this.crud.isCreating() || this.crud.isUpdating());
+
+  protected editRoleQuery = this.crud.findById(
+    computed(() => ({ id: this.editingId() ?? '' }))
+  );
+
+  constructor() {
+    // Sincronización automática con effect() cuando se obtienen los datos para editar
+    effect(() => {
+      const role = this.editRoleQuery.data();
+      if (role && this.editingId() !== null) {
+        this.form.patchValue({
+          name: role.name ?? '',
+          active: role.active,
+          permissions: role.permissions ?? [],
+        });
+      }
+    });
+  }
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -84,33 +88,34 @@ export class RolesList {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.set({ ...EMPTY_FORM });
+    this.form.reset({ name: '', active: true, permissions: [] });
     this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   openEdit(role: Role): void {
     this.editingId.set(role.id!);
-    this.form.set({
-      name: role.name ?? '',
-      active: role.active,
-      permissions: role.permissions ?? [],
-    });
     this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   closeModal(): void {
     this.modalOpen.set(false);
+    this.editingId.set(null);
   }
 
   submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.formError.set(null);
-    const value = this.form();
+    const value = this.form.value;
     const payload: Partial<Role> = {
       name: value.name,
       active: value.active,
-      permissions: value.permissions,
+      permissions: (value.permissions ?? []).map((permission: Permission) => ({ id: permission.id }) as Permission),
     };
 
     const id = this.editingId();
@@ -132,11 +137,12 @@ export class RolesList {
     this.crud.restore({ id: role.id! });
   }
 
-  updateForm<K extends keyof RoleFormValue>(key: K, value: RoleFormValue[K]): void {
-    this.form.update((current) => ({ ...current, [key]: value }));
+  onPermissionsChange(value: Permission | Permission[] | null): void {
+    const permissions = Array.isArray(value) ? value : value ? [value] : [];
+    this.form.get('permissions')?.setValue(permissions);
   }
 
-  comparePermissions = (a: Permission, b: Permission): boolean => a?.id === b?.id;
+  renderPermission = (item: Permission): string => `${item.title ?? `${item.method.toUpperCase()} ${item.path}`}`;
 
   goToPage(page: number): void {
     this.page.set(page);
