@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { QueryClient, injectMutation } from '@tanstack/angular-query-experimental';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
-import { injectFindAll } from '../../../core/composables/use-find-all';
+import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { PermissionService } from '../services/permission';
 import { Permission } from '../models/permission.model';
 
@@ -25,26 +25,20 @@ export class PermissionsList {
   protected pageSize = 10;
 
   private queryParams = computed(() => ({
-    config: {
-      params: {
-        page: this.page(),
-        pageSize: this.pageSize,
-        ...(this.search() ? { search: this.search() } : {}),
-      },
-    },
+    page: this.page(),
+    pageSize: this.pageSize,
+    ...(this.search() ? { search: this.search() } : {}),
   }));
 
   protected permissionsQuery = injectFindAll<Permission>({
     service: signal(this.permissionService),
-    queryKey: computed(() => ['permissions', this.page(), this.search()]),
+    queryKey: signal(['permissions']),
     queryParams: this.queryParams,
   });
 
   protected permissions = computed(() => this.permissionsQuery.data()?.data ?? []);
   protected pagination = computed(() => this.permissionsQuery.data()?.pagination);
 
-  // Solo se puede listar y actualizar el título: no hay creación ni eliminación de permisos,
-  // ya que se generan automáticamente escaneando los endpoints del backend.
   protected modalOpen = signal(false);
   protected editingPermission = signal<Permission | null>(null);
   protected titleValue = signal('');

@@ -5,7 +5,7 @@ import { QueryClient, injectMutation } from '@tanstack/angular-query-experimenta
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { SelectApi } from '../../../core/shared/components/select-api/select-api';
-import { injectFindAll } from '../../../core/composables/use-find-all';
+import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { UserService } from '../services/user';
 import { RoleService } from '../../roles/services/role';
 import { User } from '../models/user.model';
@@ -50,19 +50,15 @@ export class UsersList {
   protected deleted = signal(false);
 
   private queryParams = computed(() => ({
-    config: {
-      params: {
-        page: this.page(),
-        pageSize: this.pageSize,
-        ...(this.search() ? { search: this.search() } : {}),
-        ...(this.deleted() ? { deleted: true } : {}),
-      },
-    },
+    page: this.page(),
+    pageSize: this.pageSize,
+    ...(this.search() ? { search: this.search() } : {}),
+    ...(this.deleted() ? { deleted: true } : {}),
   }));
 
   protected usersQuery = injectFindAll<User>({
     service: signal(this.userService),
-    queryKey: computed(() => ['users', this.page(), this.search(), this.deleted()]),
+    queryKey: signal(['users']),
     queryParams: this.queryParams,
   });
 

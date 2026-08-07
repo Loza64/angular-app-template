@@ -12,13 +12,12 @@ import { BaseResponse } from './responses/base-response.model';
 import { PaginationResponse } from './responses/pagination-response.model';
 import { ON_FORBIDDEN, ON_UNAUTHORIZED } from '../core/http/http-context';
 
-export class Service<Entity extends BaseEntity> extends AbstractService<Entity> {
+export class Service<Entity extends BaseEntity> implements AbstractService<Entity> {
   private readonly http = inject(HttpClient);
   protected readonly endpoint: string;
   protected readonly baseUrl: string;
 
   constructor({ origin = environment.apiOrigin, initPath = 'api', endpoint = '' }: ApiServiceParams) {
-    super();
     this.endpoint = endpoint;
     this.baseUrl = `${origin}/${initPath}`;
   }

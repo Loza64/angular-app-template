@@ -8,7 +8,7 @@ interface RequestMeta {
 
 export interface ServiceConfig extends RequestMeta {
   headers?: HttpHeaders | Record<string, string | string[]>;
-  params?: HttpParams | Record<string, string | number | boolean>;
+  params?: HttpParams | Record<string, unknown>;
 }
 
 export interface ApiServiceParams {

@@ -6,8 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BaseEntity } from '../../../../sdk/entities/base-entity.model';
-import { FindAllParams } from '../../../../sdk/params-service.model';
-import { injectFindAll } from '../../../composables/use-find-all';
+import { injectFindAll } from '../../../composables/inject-find-all';
 import { Service } from '../../../../sdk/service';
 
 @Component({
@@ -32,18 +31,14 @@ export class SelectApi<T extends BaseEntity> {
   private search = signal('');
   private searchTerms = new Subject<string>();
 
-  private key = computed(() => [
-    ...(Array.isArray(this.queryKey()) ? (this.queryKey() as string[]) : [this.queryKey() as string]),
-    this.search(),
-  ]);
+  // finalQueryKey ya distingue por término de búsqueda (se serializa dentro de queryParams).
+  private key = computed(() =>
+    Array.isArray(this.queryKey()) ? (this.queryKey() as string[]) : [this.queryKey() as string],
+  );
 
-  private params = computed<FindAllParams>(() => ({
-    config: {
-      params: {
-        ...(this.querySearch()?.(this.search()) ?? {}),
-        ...this.queryParams(),
-      } as Record<string, string | number | boolean>,
-    },
+  private params = computed<Record<string, unknown>>(() => ({
+    ...(this.querySearch()?.(this.search()) ?? {}),
+    ...this.queryParams(),
   }));
 
   protected query = injectFindAll<T>({

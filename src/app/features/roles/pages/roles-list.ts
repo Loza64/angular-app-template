@@ -5,7 +5,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { QueryClient, injectMutation } from '@tanstack/angular-query-experimental';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
-import { injectFindAll } from '../../../core/composables/use-find-all';
+import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { RoleService } from '../services/role';
 import { PermissionService } from '../../permissions/services/permission';
 import { Role } from '../models/role.model';
@@ -42,30 +42,25 @@ export class RolesList {
   protected deleted = signal(false);
 
   private queryParams = computed(() => ({
-    config: {
-      params: {
-        page: this.page(),
-        pageSize: this.pageSize,
-        ...(this.search() ? { search: this.search() } : {}),
-        ...(this.deleted() ? { deleted: true } : {}),
-      },
-    },
+    page: this.page(),
+    pageSize: this.pageSize,
+    ...(this.search() ? { search: this.search() } : {}),
+    ...(this.deleted() ? { deleted: true } : {}),
   }));
 
   protected rolesQuery = injectFindAll<Role>({
     service: signal(this.roleService),
-    queryKey: computed(() => ['roles', this.page(), this.search(), this.deleted()]),
+    queryKey: signal(['roles']),
     queryParams: this.queryParams,
   });
 
   protected roles = computed(() => this.rolesQuery.data()?.data ?? []);
   protected pagination = computed(() => this.rolesQuery.data()?.pagination);
 
-  // Opciones de permisos para el multi-select del formulario (se cargan una sola vez al abrir el modal).
   protected permissionsOptionsQuery = injectFindAll<Permission>({
     service: signal(this.permissionService),
     queryKey: signal(['permissions-options']),
-    queryParams: signal({ config: { params: { pageSize: 200 } } }),
+    queryParams: signal({ pageSize: 200 }),
     enabled: computed(() => this.modalOpen()),
   });
   protected permissionOptions = computed(() => this.permissionsOptionsQuery.data()?.data ?? []);
