@@ -8,18 +8,19 @@
     <h1 class="auth-title">Crea tu cuenta</h1>
     <p class="auth-subtitle">Completa tus datos para registrarte</p>
 
-    <form class="form-grid" (ngSubmit)="submit()">
+    <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-field">
         <label for="username">Usuario</label>
         <input
           id="username"
           type="text"
-          [ngModel]="form().username"
-          (ngModelChange)="updateForm('username', $event)"
-          name="username"
+          formControlName="username"
           autocomplete="username"
           required
         />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+        <span class="form-error">El usuario es obligatorio.</span>
+        }
       </div>
 
       <div class="auth-row">
@@ -28,12 +29,13 @@
           <input
             id="name"
             type="text"
-            [ngModel]="form().name"
-            (ngModelChange)="updateForm('name', $event)"
-            name="name"
+            formControlName="name"
             autocomplete="given-name"
             required
           />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <span class="form-error">El nombre es obligatorio.</span>
+          }
         </div>
 
         <div class="form-field">
@@ -41,12 +43,13 @@
           <input
             id="surname"
             type="text"
-            [ngModel]="form().surname"
-            (ngModelChange)="updateForm('surname', $event)"
-            name="surname"
+            formControlName="surname"
             autocomplete="family-name"
             required
           />
+          @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
+          <span class="form-error">El apellido es obligatorio.</span>
+          }
         </div>
       </div>
 
@@ -55,12 +58,13 @@
         <input
           id="email"
           type="email"
-          [ngModel]="form().email"
-          (ngModelChange)="updateForm('email', $event)"
-          name="email"
+          formControlName="email"
           autocomplete="email"
           required
         />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <span class="form-error">Ingresa un email válido.</span>
+        }
       </div>
 
       <div class="form-field">
@@ -68,13 +72,14 @@
         <input
           id="password"
           type="password"
-          [ngModel]="form().password"
-          (ngModelChange)="updateForm('password', $event)"
-          name="password"
+          formControlName="password"
           autocomplete="new-password"
           required
         />
         <span class="hint">Mínimo 8 caracteres</span>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="form-error">La contraseña debe tener al menos 8 caracteres.</span>
+        }
       </div>
 
       <div class="form-field">
@@ -82,19 +87,20 @@
         <input
           id="confirmPassword"
           type="password"
-          [ngModel]="form().confirmPassword"
-          (ngModelChange)="updateForm('confirmPassword', $event)"
-          name="confirmPassword"
+          formControlName="confirmPassword"
           autocomplete="new-password"
           required
         />
+        @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
+        <span class="form-error">Las contraseñas no coinciden.</span>
+        }
       </div>
 
       @if (error()) {
         <span class="form-error">{{ error() }}</span>
       }
 
-      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading()">
+      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading() || form.invalid">
         {{ loading() ? 'Creando cuenta...' : 'Crear cuenta' }}
       </button>
     </form>

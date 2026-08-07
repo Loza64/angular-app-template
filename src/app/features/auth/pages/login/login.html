@@ -8,18 +8,19 @@
     <h1 class="auth-title">Inicia sesión</h1>
     <p class="auth-subtitle">Ingresa tus credenciales para continuar</p>
 
-    <form class="form-grid" (ngSubmit)="submit()">
+    <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-field">
         <label for="username">Usuario</label>
         <input
           id="username"
           type="text"
-          [ngModel]="username()"
-          (ngModelChange)="username.set($event)"
-          name="username"
+          formControlName="username"
           autocomplete="username"
           required
         />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+        <span class="form-error">El usuario es obligatorio.</span>
+        }
       </div>
 
       <div class="form-field">
@@ -27,19 +28,20 @@
         <input
           id="password"
           type="password"
-          [ngModel]="password()"
-          (ngModelChange)="password.set($event)"
-          name="password"
+          formControlName="password"
           autocomplete="current-password"
           required
         />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="form-error">La contraseña es obligatoria.</span>
+        }
       </div>
 
       @if (error()) {
         <span class="form-error">{{ error() }}</span>
       }
 
-      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading()">
+      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading() || form.invalid">
         {{ loading() ? 'Ingresando...' : 'Ingresar' }}
       </button>
     </form>

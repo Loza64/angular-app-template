@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: [
     './login.css',
@@ -20,15 +20,21 @@ import { AuthService } from '../../services/auth';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {
+  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  protected username = signal('');
-  protected password = signal('');
   protected error = signal<string | null>(null);
 
+  // Definición del FormGroup con validaciones nativas
+  protected form: FormGroup = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+  });
+
   private loginMutation = injectMutation(() => ({
-    mutationFn: () => firstValueFrom(this.authService.login(this.username(), this.password())),
+    mutationFn: () =>
+      firstValueFrom(this.authService.login(this.form.value.username, this.form.value.password)),
     onSuccess: () => this.router.navigateByUrl('/dashboard'),
     onError: (err: unknown) => {
       const message = err instanceof HttpErrorResponse ? (err.error?.message as string | undefined) : undefined;
@@ -39,6 +45,11 @@ export class LoginPage {
   protected loading = this.loginMutation.isPending;
 
   submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.error.set(null);
     this.loginMutation.mutate();
   }

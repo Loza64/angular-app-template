@@ -1,27 +1,30 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
-import { AuthService, SignUpPayload } from '../../services/auth';
+import { AuthService } from '../../services/auth';
 
-type SignUpFormValue = SignUpPayload & { confirmPassword: string };
-
-const EMPTY_FORM: SignUpFormValue = {
-  username: '',
-  name: '',
-  surname: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
+// Validador a nivel de grupo: compara password y confirmPassword
+function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const confirmPassword = control.get('confirmPassword')?.value;
+  return confirmPassword && password !== confirmPassword ? { passwordMismatch: true } : null;
+}
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './signup.html',
   styleUrls: [
     './signup.css',
@@ -31,20 +34,28 @@ const EMPTY_FORM: SignUpFormValue = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupPage {
+  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  protected form = signal<SignUpFormValue>({ ...EMPTY_FORM });
   protected error = signal<string | null>(null);
 
-  protected passwordMismatch = computed(() => {
-    const { password, confirmPassword } = this.form();
-    return confirmPassword.length > 0 && password !== confirmPassword;
-  });
+  // Definición del FormGroup con validaciones nativas y validador cruzado de contraseñas
+  protected form: FormGroup = this.fb.group(
+    {
+      username: ['', Validators.required],
+      name: ['', Validators.required],
+      surname: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', Validators.required],
+    },
+    { validators: passwordsMatchValidator },
+  );
 
   private signupMutation = injectMutation(() => ({
     mutationFn: () => {
-      const { confirmPassword, ...payload } = this.form();
+      const { confirmPassword, ...payload } = this.form.value;
       return firstValueFrom(this.authService.signup(payload));
     },
     onSuccess: () => this.router.navigateByUrl('/dashboard'),
@@ -56,22 +67,13 @@ export class SignupPage {
 
   protected loading = this.signupMutation.isPending;
 
-  updateForm<K extends keyof SignUpFormValue>(key: K, value: SignUpFormValue[K]): void {
-    this.form.update((current) => ({ ...current, [key]: value }));
-  }
-
   submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.error.set(null);
-
-    if (this.form().password.length < 8) {
-      this.error.set('La contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-    if (this.passwordMismatch()) {
-      this.error.set('Las contraseñas no coinciden.');
-      return;
-    }
-
     this.signupMutation.mutate();
   }
 }

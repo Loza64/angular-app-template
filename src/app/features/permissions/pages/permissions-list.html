@@ -2,12 +2,11 @@
   <div class="toolbar">
     <div class="search-box">
       <app-icon name="search" [size]="16" />
-      <input type="text" placeholder="Buscar permisos..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
+      <input type="text" placeholder="Buscar permisos..." [value]="search()" (input)="onSearch($event.target.value)" />
     </div>
     <span class="toolbar-spacer"></span>
     <span class="hint">Los permisos se generan automáticamente a partir de los endpoints del backend.</span>
   </div>
-  dfddsfsd
   <app-table [loading]="permissionsQuery.isLoading()" [empty]="permissions().length === 0"
     emptyText="No se encontraron permisos." [pagination]="pagination()" (pageChange)="goToPage($event)">
     <ng-container header>
@@ -37,11 +36,13 @@
 </div>
 
 <app-modal [open]="modalOpen()" [title]="'Editar permiso'" (closed)="closeModal()">
-  <form class="form-grid" (ngSubmit)="submit()">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
     <div class="form-field">
       <label for="permission-title">Título</label>
-      <input id="permission-title" type="text" [ngModel]="titleValue()" (ngModelChange)="titleValue.set($event)"
-        name="title" required />
+      <input id="permission-title" type="text" formControlName="title" required />
+      @if (form.get('title')?.invalid && form.get('title')?.touched) {
+      <span class="form-error">El título es obligatorio.</span>
+      }
     </div>
 
     @if (editingPermission(); as permission) {
@@ -62,7 +63,7 @@
 
     <div class="form-actions">
       <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
         {{ saving() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>

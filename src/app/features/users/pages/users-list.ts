@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { SelectApi } from '../../../core/shared/components/select-api/select-api';
@@ -12,35 +12,16 @@ import { RoleService } from '../../roles/services/role';
 import { User } from '../models/user.model';
 import { Role } from '../../roles/models/role.model';
 
-type UserFormValue = {
-  username: string;
-  name: string;
-  surname: string;
-  email: string;
-  password: string;
-  blocked: boolean;
-  role: Role | null;
-};
-
-const EMPTY_FORM: UserFormValue = {
-  username: '',
-  name: '',
-  surname: '',
-  email: '',
-  password: '',
-  blocked: false,
-  role: null,
-};
-
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, Modal, SelectApi, Table],
+  imports: [CommonModule, ReactiveFormsModule, Icon, Modal, SelectApi, Table],
   templateUrl: './users-list.html',
   styleUrls: ['./users-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersList {
+  private fb = inject(FormBuilder);
   private userService = inject(UserService);
   protected roleService = inject(RoleService);
 
@@ -73,8 +54,17 @@ export class UsersList {
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
-  protected form = signal<UserFormValue>({ ...EMPTY_FORM });
   protected formError = signal<string | null>(null);
+
+  protected form: FormGroup = this.fb.group({
+    username: ['', Validators.required],
+    name: [''],
+    surname: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: [''],
+    blocked: [false],
+    role: [null as Role | null],
+  });
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -83,33 +73,51 @@ export class UsersList {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.set({ ...EMPTY_FORM });
+    this.form.reset({
+      username: '',
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      blocked: false,
+      role: null,
+    });
+    this.form.get('password')?.setValidators(Validators.required);
+    this.form.get('password')?.updateValueAndValidity();
     this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   openEdit(user: User): void {
     this.editingId.set(user.id!);
-    this.form.set({
+    this.form.reset({
       username: user.username,
       name: user.name ?? '',
       surname: user.surname,
       email: user.email,
       password: '',
       blocked: user.blocked,
-      role: user.role ?? null,
+      role: user.role,
     });
+    this.form.get('password')?.clearValidators();
+    this.form.get('password')?.updateValueAndValidity();
     this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   closeModal(): void {
     this.modalOpen.set(false);
+    this.editingId.set(null);
   }
 
   submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.formError.set(null);
-    const value = this.form();
+    const value = this.form.value;
     const payload: Partial<User> & { password?: string } = {
       username: value.username,
       name: value.name,
@@ -121,9 +129,7 @@ export class UsersList {
     if (!this.editingId() && value.password) payload.password = value.password;
 
     const id = this.editingId();
-    const request = id
-      ? this.crud.update({ id, payload })
-      : this.crud.create({ payload: payload as User });
+    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload as User });
 
     request
       .then(() => this.closeModal())
@@ -139,13 +145,9 @@ export class UsersList {
     this.crud.restore({ id: user.id! });
   }
 
-  updateForm<K extends keyof UserFormValue>(key: K, value: UserFormValue[K]): void {
-    this.form.update((current) => ({ ...current, [key]: value }));
-  }
-
   onRoleChange(value: Role | Role[] | null): void {
     const role = Array.isArray(value) ? (value[0] ?? null) : value;
-    this.updateForm('role', role);
+    this.form.get('role')?.setValue(role);
   }
 
   goToPage(page: number): void {

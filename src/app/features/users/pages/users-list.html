@@ -1,11 +1,11 @@
 <div class="toolbar">
   <div class="search-box">
     <app-icon name="search" [size]="16" />
-    <input type="text" placeholder="Buscar usuarios..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
+    <input type="text" placeholder="Buscar usuarios..." [value]="search()" (input)="onSearch($event.target.value)" />
   </div>
 
   <label class="checkbox-label">
-    <input type="checkbox" [ngModel]="deleted()" (ngModelChange)="deleted.set($event)" />
+    <input type="checkbox" [checked]="deleted()" (change)="deleted.set($event.target.checked)" />
     Mostrar eliminados
   </label>
 
@@ -66,47 +66,54 @@
 </app-table>
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar usuario' : 'Nuevo usuario'" (closed)="closeModal()">
-  <form class="form-grid" (ngSubmit)="submit()">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
     <div class="form-field">
       <label for="username">Usuario</label>
-      <input id="username" type="text" [ngModel]="form().username" (ngModelChange)="updateForm('username', $event)"
-        name="username" required />
+      <input id="username" type="text" formControlName="username" required />
+      @if (form.get('username')?.invalid && form.get('username')?.touched) {
+      <span class="form-error">El usuario es obligatorio.</span>
+      }
     </div>
 
     <div class="form-field">
       <label for="name">Nombre</label>
-      <input id="name" type="text" [ngModel]="form().name" (ngModelChange)="updateForm('name', $event)" name="name" />
+      <input id="name" type="text" formControlName="name" />
     </div>
 
     <div class="form-field">
       <label for="surname">Apellido</label>
-      <input id="surname" type="text" [ngModel]="form().surname" (ngModelChange)="updateForm('surname', $event)"
-        name="surname" required />
+      <input id="surname" type="text" formControlName="surname" required />
+      @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
+      <span class="form-error">El apellido es obligatorio.</span>
+      }
     </div>
 
     <div class="form-field">
       <label for="email">Email</label>
-      <input id="email" type="email" [ngModel]="form().email" (ngModelChange)="updateForm('email', $event)" name="email"
-        required />
+      <input id="email" type="email" formControlName="email" required />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+      <span class="form-error">Ingresa un email válido.</span>
+      }
     </div>
 
     @if (!editingId()) {
     <div class="form-field">
       <label for="password">Contraseña</label>
-      <input id="password" type="password" [ngModel]="form().password" (ngModelChange)="updateForm('password', $event)"
-        name="password" required />
+      <input id="password" type="password" formControlName="password" required />
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+      <span class="form-error">La contraseña es obligatoria.</span>
+      }
     </div>
     }
 
     <div class="form-field">
       <label>Rol</label>
-      <app-select-api [service]="roleService" queryKey="roles-select" [value]="form().role"
+      <app-select-api [service]="roleService" queryKey="roles-select" [value]="form.get('role')?.value"
         (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
     </div>
 
     <label class="form-toggle">
-      <input type="checkbox" [ngModel]="form().blocked" (ngModelChange)="updateForm('blocked', $event)"
-        name="blocked" />
+      <input type="checkbox" formControlName="blocked" />
       Usuario bloqueado
     </label>
 
@@ -116,7 +123,7 @@
 
     <div class="form-actions">
       <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
         {{ saving() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>
