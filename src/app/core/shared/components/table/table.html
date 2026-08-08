@@ -3,18 +3,48 @@
     <table>
       <thead>
         <tr>
-          <ng-content select="[header]" />
+          @for (column of columns(); track column.key) {
+            <th
+              [style.width]="column.width"
+              [class.align-center]="column.align === 'center'"
+              [class.align-right]="column.align === 'right'"
+            >
+              {{ column.title }}
+            </th>
+          }
         </tr>
       </thead>
       <tbody>
-        @if (empty()) {
+        @if (loading()) {
           <tr>
-            <td class="empty-state" colspan="100">
-              {{ loading() ? loadingText() : emptyText() }}
-            </td>
+            <td class="empty-state" [attr.colspan]="columns().length || 1">{{ loadingText() }}</td>
+          </tr>
+        } @else if (empty()) {
+          <tr>
+            <td class="empty-state" [attr.colspan]="columns().length || 1">{{ emptyText() }}</td>
           </tr>
         } @else {
-          <ng-content select="[body]" />
+          @for (record of data(); track trackByRow($index, record); let index = $index) {
+            <tr>
+              @for (column of columns(); track column.key) {
+                <td [class.align-center]="column.align === 'center'" [class.align-right]="column.align === 'right'">
+                  @if (templateFor(column.key); as cellTemplate) {
+                    <ng-container
+                      [ngTemplateOutlet]="cellTemplate"
+                      [ngTemplateOutletContext]="{
+                        $implicit: record,
+                        record: record,
+                        value: cellValue(column, record),
+                        index
+                      }"
+                    />
+                  } @else {
+                    {{ cellText(column, record, index) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
         }
       </tbody>
     </table>

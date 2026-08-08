@@ -1,29 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
-import { SelectApi } from '../../../core/shared/components/select-api/select-api';
 import { Table } from '../../../core/shared/components/table/table';
+import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { injectCrud } from '../../../core/composables/inject-crud';
 import { UserService } from '../services/user';
-import { RoleService } from '../../roles/services/role';
 import { User } from '../models/user.model';
-import { Role } from '../../roles/models/role.model';
+import { UserForm } from '../components/user-form/user-form';
 
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Icon, Modal, SelectApi, Table],
+  imports: [Icon, Modal, Table, TableCellDirective, UserForm],
   templateUrl: './users-list.html',
   styleUrls: ['./users-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersList {
-  private fb = inject(FormBuilder);
   private userService = inject(UserService);
-  protected roleService = inject(RoleService);
 
   protected search = signal('');
   protected page = signal(1);
@@ -49,22 +44,19 @@ export class UsersList {
     return p ? { ...p, itemsLabel: 'usuarios' } : null;
   });
 
+  protected columns: TableColumn<User>[] = [
+    { title: 'Usuario', dataIndex: 'username', key: 'username' },
+    { title: 'Nombre', key: 'fullname', render: (_, record) => `${record.name ?? ''} ${record.surname ?? ''}`.trim() },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Rol', key: 'role', render: (_, record) => record.role?.name ?? '—' },
+    { title: 'Estado', key: 'status' },
+    { title: '', key: 'actions', width: '90px' },
+  ];
+
   protected crud = injectCrud<User>(signal(this.userService), { queryKey: 'users' });
-  protected saving = computed(() => this.crud.isCreating() || this.crud.isUpdating());
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
-  protected formError = signal<string | null>(null);
-
-  protected form: FormGroup = this.fb.group({
-    username: ['', Validators.required],
-    name: [''],
-    surname: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: [''],
-    blocked: [false],
-    role: [null as Role | null],
-  });
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -73,35 +65,11 @@ export class UsersList {
 
   openCreate(): void {
     this.editingId.set(null);
-    this.form.reset({
-      username: '',
-      name: '',
-      surname: '',
-      email: '',
-      password: '',
-      blocked: false,
-      role: null,
-    });
-    this.form.get('password')?.setValidators(Validators.required);
-    this.form.get('password')?.updateValueAndValidity();
-    this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   openEdit(user: User): void {
     this.editingId.set(user.id!);
-    this.form.reset({
-      username: user.username,
-      name: user.name ?? '',
-      surname: user.surname,
-      email: user.email,
-      password: '',
-      blocked: user.blocked,
-      role: user.role,
-    });
-    this.form.get('password')?.clearValidators();
-    this.form.get('password')?.updateValueAndValidity();
-    this.formError.set(null);
     this.modalOpen.set(true);
   }
 
@@ -110,30 +78,8 @@ export class UsersList {
     this.editingId.set(null);
   }
 
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.formError.set(null);
-    const value = this.form.value;
-    const payload: Partial<User> & { password?: string } = {
-      username: value.username,
-      name: value.name,
-      surname: value.surname,
-      email: value.email,
-      blocked: value.blocked,
-      role: value.role ? ({ id: value.role.id } as Role) : undefined,
-    };
-    if (!this.editingId() && value.password) payload.password = value.password;
-
-    const id = this.editingId();
-    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload as User });
-
-    request
-      .then(() => this.closeModal())
-      .catch(() => this.formError.set('No se pudo guardar el usuario. Revisa los datos e intenta de nuevo.'));
+  onFormSaved(): void {
+    this.closeModal();
   }
 
   remove(user: User): void {
@@ -143,11 +89,6 @@ export class UsersList {
 
   restore(user: User): void {
     this.crud.restore({ id: user.id! });
-  }
-
-  onRoleChange(value: Role | Role[] | null): void {
-    const role = Array.isArray(value) ? (value[0] ?? null) : value;
-    this.form.get('role')?.setValue(role);
   }
 
   goToPage(page: number): void {

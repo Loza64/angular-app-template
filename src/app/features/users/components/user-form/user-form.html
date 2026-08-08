@@ -1,0 +1,66 @@
+<form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+  @if (loadingEdit()) {
+  <div class="form-loading-state">Cargando datos del usuario...</div>
+  } @else {
+  <div class="form-field">
+    <label for="username">Usuario</label>
+    <input id="username" type="text" formControlName="username" required />
+    @if (form.get('username')?.invalid && form.get('username')?.touched) {
+    <span class="form-error">El usuario es obligatorio.</span>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="name">Nombre</label>
+    <input id="name" type="text" formControlName="name" />
+  </div>
+
+  <div class="form-field">
+    <label for="surname">Apellido</label>
+    <input id="surname" type="text" formControlName="surname" required />
+    @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
+    <span class="form-error">El apellido es obligatorio.</span>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email" required />
+    @if (form.get('email')?.invalid && form.get('email')?.touched) {
+    <span class="form-error">Ingresa un email válido.</span>
+    }
+  </div>
+
+  @if (!userId()) {
+  <div class="form-field">
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" formControlName="password" required />
+    @if (form.get('password')?.invalid && form.get('password')?.touched) {
+    <span class="form-error">La contraseña es obligatoria.</span>
+    }
+  </div>
+  }
+
+  <div class="form-field">
+    <label>Rol</label>
+    <app-select-api [service]="roleService" queryKey="roles-select" [value]="form.get('role')?.value"
+      (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
+  </div>
+
+  <label class="form-toggle">
+    <input type="checkbox" formControlName="blocked" />
+    Usuario bloqueado
+  </label>
+  }
+
+  @if (formError()) {
+  <span class="form-error">{{ formError() }}</span>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid || loadingEdit()">
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+</form>

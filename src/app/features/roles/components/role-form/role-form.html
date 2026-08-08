@@ -1,0 +1,37 @@
+<form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+  @if (loadingEdit()) {
+  <div class="form-loading-state">Cargando datos del rol...</div>
+  } @else {
+  <div class="form-field">
+    <label for="role-name">Nombre</label>
+    <input id="role-name" type="text" formControlName="name" required />
+    @if (form.get('name')?.invalid && form.get('name')?.touched) {
+    <span class="form-error">El nombre es obligatorio.</span>
+    }
+  </div>
+
+  <div class="form-field">
+    <label>Permisos</label>
+    <app-select-multiple-api [service]="permissionService" queryKey="permissions-select"
+      [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value"
+      (valueChange)="onPermissionsChange($event)" placeholder="Selecciona permisos"
+      notFoundText="No se encontraron permisos" />
+  </div>
+
+  <label class="form-toggle">
+    <input type="checkbox" formControlName="active" />
+    Rol activo
+  </label>
+  }
+
+  @if (formError()) {
+  <span class="form-error">{{ formError() }}</span>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid || loadingEdit()">
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+</form>

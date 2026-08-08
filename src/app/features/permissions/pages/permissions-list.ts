@@ -1,24 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { Table } from '../../../core/shared/components/table/table';
+import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
-import { injectCrud } from '../../../core/composables/inject-crud';
 import { PermissionService } from '../services/permission';
 import { Permission } from '../models/permission.model';
+import { PermissionForm } from '../components/permission-form/permission-form';
 
 @Component({
   selector: 'app-permissions-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Icon, Modal, Table],
+  imports: [Icon, Modal, Table, TableCellDirective, PermissionForm],
   templateUrl: './permissions-list.html',
   styleUrls: ['./permissions-list.css', '../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsList {
-  private fb = inject(FormBuilder);
   private permissionService = inject(PermissionService);
 
   protected search = signal('');
@@ -43,14 +41,15 @@ export class PermissionsList {
     return p ? { ...p, itemsLabel: 'permisos' } : null;
   });
 
-  protected crud = injectCrud<Permission>(signal(this.permissionService), { queryKey: 'permissions' });
-  protected saving = this.crud.isUpdating;
+  protected columns: TableColumn<Permission>[] = [
+    { title: 'Título', dataIndex: 'title', key: 'title', render: (value) => value ?? 'N/A' },
+    { title: 'Método', dataIndex: 'method', key: 'method' },
+    { title: 'Ruta', dataIndex: 'path', key: 'path' },
+    { title: '', key: 'actions', width: '60px' },
+  ];
 
   protected modalOpen = signal(false);
   protected editingPermission = signal<Permission | null>(null);
-  protected formError = signal<string | null>(null);
-
-  protected form: FormGroup = this.fb.group({ title: ['', [Validators.required, Validators.minLength(2)]] });
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -59,29 +58,16 @@ export class PermissionsList {
 
   openEdit(permission: Permission): void {
     this.editingPermission.set(permission);
-    this.form.reset({ title: permission.title });
-    this.formError.set(null);
     this.modalOpen.set(true);
   }
 
   closeModal(): void {
     this.modalOpen.set(false);
+    this.editingPermission.set(null);
   }
 
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.formError.set(null);
-    const permission = this.editingPermission();
-    if (!permission) return;
-
-    this.crud
-      .update({ id: permission.id!, payload: { title: this.form.value.title } })
-      .then(() => this.closeModal())
-      .catch(() => this.formError.set('No se pudo actualizar el permiso. Intenta de nuevo.'));
+  onFormSaved(): void {
+    this.closeModal();
   }
 
   goToPage(page: number): void {

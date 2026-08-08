@@ -1,0 +1,32 @@
+<form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="form-field">
+    <label for="permission-title">Título</label>
+    <input id="permission-title" type="text" formControlName="title" required />
+    @if (form.get('title')?.invalid && form.get('title')?.touched) {
+    <span class="form-error">El título es obligatorio.</span>
+    }
+  </div>
+
+  @if (permission(); as p) {
+  <div class="form-field">
+    <label>Método</label>
+    <input type="text" [value]="p.method" disabled />
+  </div>
+
+  <div class="form-field">
+    <label>Ruta</label>
+    <input type="text" [value]="p.path" disabled />
+  </div>
+  }
+
+  @if (formError()) {
+  <span class="form-error">{{ formError() }}</span>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
+      {{ saving() ? 'Guardando...' : 'Guardar' }}
+    </button>
+  </div>
+</form>

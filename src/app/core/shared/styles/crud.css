@@ -111,40 +111,11 @@
 }
 
 /*
- * El shell de la tabla (card, scroll, tamaño de fuente, fila vacía y
- * paginación) lo resuelve <app-table> (core/shared/components/table).
- * Aquí solo queda lo que sigue siendo declarado por cada vista CRUD:
- * las celdas (th/td) que se proyectan dentro de <app-table>.
+ * El shell de la tabla completo (card, scroll, th/td, fila vacía,
+ * hover y paginación) lo resuelve <app-table> a partir de [columns]/[data]
+ * (core/shared/components/table). Aquí solo queda el contenido que se
+ * proyecta dentro de las celdas vía <ng-template appTableCell="...">.
  */
-
-th {
-  text-align: left;
-  padding: 12px 16px;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-/* Sin ancestro "tbody": ese elemento ahora lo declara <app-table>, en otro
-   ámbito de encapsulación, así que el selector no debe depender de él. */
-tr:last-child td {
-  border-bottom: none;
-}
-
-tr:hover {
-  background: var(--surface-muted);
-}
 
 .row-actions {
   display: flex;
@@ -214,6 +185,13 @@ tr:hover {
 .form-field input:disabled {
   background: var(--surface-muted);
   color: var(--text-muted);
+}
+
+.form-loading-state {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
 }
 
 .form-error {

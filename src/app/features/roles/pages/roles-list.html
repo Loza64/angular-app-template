@@ -17,88 +17,36 @@
   </button>
 </div>
 
-<app-table [loading]="rolesQuery.isLoading()" [empty]="roles().length === 0" emptyText="No se encontraron roles."
-  [pagination]="pagination()" (pageChange)="goToPage($event)">
-  <ng-container header>
-    <th>Nombre</th>
-    <th>Permisos</th>
-    <th>Estado</th>
-    <th></th>
-  </ng-container>
-
-  <ng-container body>
-    @for (role of roles(); track role.id) {
-    <tr>
-      <td>{{ role.name }}</td>
-      <td>{{ role.permissions?.length ?? 0 }} permisos</td>
-      <td>
-        @if (role.deletedAt) {
-        <span class="badge badge-neutral">Eliminado</span>
-        } @else if (role.active) {
-        <span class="badge badge-success">Activo</span>
-        } @else {
-        <span class="badge badge-danger">Inactivo</span>
-        }
-      </td>
-      <td>
-        <div class="row-actions">
-          @if (role.deletedAt) {
-          <button type="button" class="icon-btn icon-btn-success" (click)="restore(role)" title="Restaurar">
-            <app-icon name="restore" [size]="15" />
-          </button>
-          } @else {
-          <button type="button" class="icon-btn" (click)="openEdit(role)" title="Editar">
-            <app-icon name="edit" [size]="15" />
-          </button>
-          <button type="button" class="icon-btn icon-btn-danger" (click)="remove(role)" title="Eliminar">
-            <app-icon name="trash" [size]="15" />
-          </button>
-          }
-        </div>
-      </td>
-    </tr>
+<app-table [columns]="columns" [data]="roles()" [loading]="rolesQuery.isLoading()"
+  emptyText="No se encontraron roles." [pagination]="pagination()" (pageChange)="goToPage($event)">
+  <ng-template appTableCell="status" let-record>
+    @if (record.deletedAt) {
+    <span class="badge badge-neutral">Eliminado</span>
+    } @else if (record.active) {
+    <span class="badge badge-success">Activo</span>
+    } @else {
+    <span class="badge badge-danger">Inactivo</span>
     }
-  </ng-container>
+  </ng-template>
+
+  <ng-template appTableCell="actions" let-record>
+    <div class="row-actions">
+      @if (record.deletedAt) {
+      <button type="button" class="icon-btn icon-btn-success" (click)="restore(record)" title="Restaurar">
+        <app-icon name="restore" [size]="15" />
+      </button>
+      } @else {
+      <button type="button" class="icon-btn" (click)="openEdit(record)" title="Editar">
+        <app-icon name="edit" [size]="15" />
+      </button>
+      <button type="button" class="icon-btn icon-btn-danger" (click)="remove(record)" title="Eliminar">
+        <app-icon name="trash" [size]="15" />
+      </button>
+      }
+    </div>
+  </ng-template>
 </app-table>
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar rol' : 'Nuevo rol'" (closed)="closeModal()">
-  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-
-    @if (editRoleQuery.isLoading() && editingId()) {
-    <div class="form-loading-state">Cargando datos del rol...</div>
-    } @else {
-    <div class="form-field">
-      <label for="role-name">Nombre</label>
-      <input id="role-name" type="text" formControlName="name" required />
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-      <span class="form-error">El nombre es obligatorio.</span>
-      }
-    </div>
-
-    <div class="form-field">
-      <label>Permisos</label>
-      <app-select-multiple-api [service]="permissionService" queryKey="permissions-select"
-        [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value"
-        (valueChange)="onPermissionsChange($event)" placeholder="Selecciona permisos"
-        notFoundText="No se encontraron permisos" />
-    </div>
-
-    <label class="form-toggle">
-      <input type="checkbox" formControlName="active" />
-      Rol activo
-    </label>
-    }
-
-    @if (formError()) {
-    <span class="form-error">{{ formError() }}</span>
-    }
-
-    <div class="form-actions">
-      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary"
-        [disabled]="saving() || form.invalid || (editRoleQuery.isLoading() && !!editingId())">
-        {{ saving() ? 'Guardando...' : 'Guardar' }}
-      </button>
-    </div>
-  </form>
+  <app-role-form [roleId]="editingId()" (saved)="onFormSaved()" (cancelled)="closeModal()" />
 </app-modal>

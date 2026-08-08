@@ -17,115 +17,36 @@
   </button>
 </div>
 
-<app-table [loading]="usersQuery.isLoading()" [empty]="users().length === 0" emptyText="No se encontraron usuarios."
-  [pagination]="pagination()" (pageChange)="goToPage($event)">
-  <ng-container header>
-    <th>Usuario</th>
-    <th>Nombre</th>
-    <th>Email</th>
-    <th>Rol</th>
-    <th>Estado</th>
-    <th></th>
-  </ng-container>
-
-  <ng-container body>
-    @for (user of users(); track user.id) {
-    <tr>
-      <td>{{ user.username }}</td>
-      <td>{{ user.name }} {{ user.surname }}</td>
-      <td>{{ user.email }}</td>
-      <td>{{ user.role?.name ?? '—' }}</td>
-      <td>
-        @if (user.deletedAt) {
-        <span class="badge badge-neutral">Eliminado</span>
-        } @else if (user.blocked) {
-        <span class="badge badge-danger">Bloqueado</span>
-        } @else {
-        <span class="badge badge-success">Activo</span>
-        }
-      </td>
-      <td>
-        <div class="row-actions">
-          @if (user.deletedAt) {
-          <button type="button" class="icon-btn icon-btn-success" (click)="restore(user)" title="Restaurar">
-            <app-icon name="restore" [size]="15" />
-          </button>
-          } @else {
-          <button type="button" class="icon-btn" (click)="openEdit(user)" title="Editar">
-            <app-icon name="edit" [size]="15" />
-          </button>
-          <button type="button" class="icon-btn icon-btn-danger" (click)="remove(user)" title="Eliminar">
-            <app-icon name="trash" [size]="15" />
-          </button>
-          }
-        </div>
-      </td>
-    </tr>
+<app-table [columns]="columns" [data]="users()" [loading]="usersQuery.isLoading()"
+  emptyText="No se encontraron usuarios." [pagination]="pagination()" (pageChange)="goToPage($event)">
+  <ng-template appTableCell="status" let-record>
+    @if (record.deletedAt) {
+    <span class="badge badge-neutral">Eliminado</span>
+    } @else if (record.blocked) {
+    <span class="badge badge-danger">Bloqueado</span>
+    } @else {
+    <span class="badge badge-success">Activo</span>
     }
-  </ng-container>
+  </ng-template>
+
+  <ng-template appTableCell="actions" let-record>
+    <div class="row-actions">
+      @if (record.deletedAt) {
+      <button type="button" class="icon-btn icon-btn-success" (click)="restore(record)" title="Restaurar">
+        <app-icon name="restore" [size]="15" />
+      </button>
+      } @else {
+      <button type="button" class="icon-btn" (click)="openEdit(record)" title="Editar">
+        <app-icon name="edit" [size]="15" />
+      </button>
+      <button type="button" class="icon-btn icon-btn-danger" (click)="remove(record)" title="Eliminar">
+        <app-icon name="trash" [size]="15" />
+      </button>
+      }
+    </div>
+  </ng-template>
 </app-table>
 
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar usuario' : 'Nuevo usuario'" (closed)="closeModal()">
-  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-    <div class="form-field">
-      <label for="username">Usuario</label>
-      <input id="username" type="text" formControlName="username" required />
-      @if (form.get('username')?.invalid && form.get('username')?.touched) {
-      <span class="form-error">El usuario es obligatorio.</span>
-      }
-    </div>
-
-    <div class="form-field">
-      <label for="name">Nombre</label>
-      <input id="name" type="text" formControlName="name" />
-    </div>
-
-    <div class="form-field">
-      <label for="surname">Apellido</label>
-      <input id="surname" type="text" formControlName="surname" required />
-      @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
-      <span class="form-error">El apellido es obligatorio.</span>
-      }
-    </div>
-
-    <div class="form-field">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" required />
-      @if (form.get('email')?.invalid && form.get('email')?.touched) {
-      <span class="form-error">Ingresa un email válido.</span>
-      }
-    </div>
-
-    @if (!editingId()) {
-    <div class="form-field">
-      <label for="password">Contraseña</label>
-      <input id="password" type="password" formControlName="password" required />
-      @if (form.get('password')?.invalid && form.get('password')?.touched) {
-      <span class="form-error">La contraseña es obligatoria.</span>
-      }
-    </div>
-    }
-
-    <div class="form-field">
-      <label>Rol</label>
-      <app-select-api [service]="roleService" queryKey="roles-select" [value]="form.get('role')?.value"
-        (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
-    </div>
-
-    <label class="form-toggle">
-      <input type="checkbox" formControlName="blocked" />
-      Usuario bloqueado
-    </label>
-
-    @if (formError()) {
-    <span class="form-error">{{ formError() }}</span>
-    }
-
-    <div class="form-actions">
-      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
-        {{ saving() ? 'Guardando...' : 'Guardar' }}
-      </button>
-    </div>
-  </form>
+  <app-user-form [userId]="editingId()" (saved)="onFormSaved()" (cancelled)="closeModal()" />
 </app-modal>

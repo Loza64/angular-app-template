@@ -7,65 +7,23 @@
     <span class="toolbar-spacer"></span>
     <span class="hint">Los permisos se generan automáticamente a partir de los endpoints del backend.</span>
   </div>
-  <app-table [loading]="permissionsQuery.isLoading()" [empty]="permissions().length === 0"
-    emptyText="No se encontraron permisos." [pagination]="pagination()" (pageChange)="goToPage($event)">
-    <ng-container header>
-      <th>Título</th>
-      <th>Método</th>
-      <th>Ruta</th>
-      <th></th>
-    </ng-container>
 
-    <ng-container body>
-      @for (permission of permissions(); track permission.id) {
-      <tr>
-        <td>{{ permission.title }}</td>
-        <td><span class="badge badge-neutral">{{ permission.method }}</span></td>
-        <td>{{ permission.path }}</td>
-        <td>
-          <div class="row-actions">
-            <button type="button" class="icon-btn" (click)="openEdit(permission)" title="Editar título">
-              <app-icon name="edit" [size]="15" />
-            </button>
-          </div>
-        </td>
-      </tr>
-      }
-    </ng-container>
+  <app-table [columns]="columns" [data]="permissions()" [loading]="permissionsQuery.isLoading()" [rowKey]="'id'"
+    emptyText="No se encontraron permisos." [pagination]="pagination()" (pageChange)="goToPage($event)">
+    <ng-template appTableCell="method" let-record>
+      <span class="badge badge-neutral">{{ record.method }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="actions" let-record>
+      <div class="row-actions">
+        <button type="button" class="icon-btn" (click)="openEdit(record)" title="Editar título">
+          <app-icon name="edit" [size]="15" />
+        </button>
+      </div>
+    </ng-template>
   </app-table>
 </div>
 
 <app-modal [open]="modalOpen()" [title]="'Editar permiso'" (closed)="closeModal()">
-  <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-    <div class="form-field">
-      <label for="permission-title">Título</label>
-      <input id="permission-title" type="text" formControlName="title" required />
-      @if (form.get('title')?.invalid && form.get('title')?.touched) {
-      <span class="form-error">El título es obligatorio.</span>
-      }
-    </div>
-
-    @if (editingPermission(); as permission) {
-    <div class="form-field">
-      <label>Método</label>
-      <input type="text" [value]="permission.method" disabled />
-    </div>
-
-    <div class="form-field">
-      <label>Ruta</label>
-      <input type="text" [value]="permission.path" disabled />
-    </div>
-    }
-
-    @if (formError()) {
-    <span class="form-error">{{ formError() }}</span>
-    }
-
-    <div class="form-actions">
-      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
-        {{ saving() ? 'Guardando...' : 'Guardar' }}
-      </button>
-    </div>
-  </form>
+  <app-permission-form [permission]="editingPermission()" (saved)="onFormSaved()" (cancelled)="closeModal()" />
 </app-modal>
