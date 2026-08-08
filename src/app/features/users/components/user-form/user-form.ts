@@ -62,7 +62,7 @@ export class UserForm {
           name: user.name ?? '',
           surname: user.surname,
           email: user.email,
-          password: '',
+          password: undefined,
           blocked: user.blocked,
           role: user.role,
         });

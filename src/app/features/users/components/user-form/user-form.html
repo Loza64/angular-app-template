@@ -47,10 +47,12 @@
       (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
   </div>
 
+  @if(userId()){
   <label class="form-toggle">
     <input type="checkbox" formControlName="blocked" />
     Usuario bloqueado
   </label>
+  }
   }
 
   @if (formError()) {
