@@ -10,7 +10,7 @@ export interface TableColumn<T extends BaseEntity, K extends keyof T = keyof T> 
   width?: string;
   align?: 'left' | 'center' | 'right';
   render?: (
-    value: K extends keyof T ? T[K] : unknown,
+    value: any,
     record: T,
     index: number
   ) => string;
