@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
+:root {
+  /* Variables globales (antes vivían en :host de app.css).
+     Deben estar en :root para que las herede cualquier elemento
+     colgado de <body> por appendTo="body" (ng-select, cdk overlay, etc.),
+     ya que esos elementos son hermanos de <app-root>, no descendientes. */
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-muted: #f0f1f4;
+  --border: #e3e5ea;
+  --text: #1a1d24;
+  --text-muted: #6b7280;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --ng-selected-color-bg: #14161f;
+  --ng-selected-color-text: white;
+
+  --select-bg: var(--surface);
+  --select-border: var(--border);
+  --select-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --select-option-text: var(--text);
+  --select-option-hover-bg: var(--surface-muted);
+  --select-option-hover-text: var(--text);
+  --select-selected-hover-bg: #1f2330;
+}
+
 .ng-dropdown-panel {
   position: fixed !important;
-  width: var(--ng-dropdown-width, 100%) !important;
   min-width: 200px !important;
   background-color: var(--select-bg) !important;
   border: 1px solid var(--select-border);
@@ -15,7 +42,6 @@
   isolation: isolate;
 }
 
-/* --- Opción individual del select --- */
 .ng-option {
   padding: 0.5rem 0.75rem !important;
   border-radius: var(--radius-sm);
@@ -24,7 +50,6 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-/* --- Efecto hover normal (para opciones NO seleccionadas) --- */
 .ng-option:hover:not(.ng-option-selected),
 .ng-option.ng-option-marked:not(.ng-option-selected) {
   background-color: var(--select-option-hover-bg) !important;

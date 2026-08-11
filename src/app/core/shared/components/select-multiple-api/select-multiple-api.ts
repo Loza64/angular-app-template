@@ -17,6 +17,7 @@ import { Service } from '../../../../sdk/service';
     <ng-select
       class="ant-select-skin"
       dropdownClass="ant-select-skin-panel"
+      appendTo="body"
       [items]="options()"
       [multiple]="true"
       [closeOnSelect]="false"

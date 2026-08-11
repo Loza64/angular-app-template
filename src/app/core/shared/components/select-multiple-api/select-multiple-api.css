@@ -191,6 +191,17 @@
 }
 
 ::ng-deep .ant-select-skin-panel {
+  /* appendTo="body" saca el panel del árbol del :host, así que las
+     variables no se heredan: se redefinen aquí para que el panel
+     siempre tenga sus valores sin depender de la herencia. */
+  --select-border: #d9d9d9;
+  --select-radius: 6px;
+  --select-text: rgba(0, 0, 0, 0.88);
+  --select-option-hover: #f5f5f5;
+  --select-option-selected-bg: #e6f4ff;
+  --select-option-selected-text: rgba(0, 0, 0, 0.88);
+  --select-font-size: 14px;
+
   position: absolute;
   z-index: 1050;
   background-color: #ffffff;
@@ -244,7 +255,6 @@
   text-align: center;
 }
 
-/* ---------- Modo múltiple: tags estilo AntD ---------- */
 ::ng-deep .ant-select-skin.ng-select-multiple .ng-select-container {
   height: auto;
   min-height: var(--select-height);
