@@ -19,13 +19,14 @@ import { Service } from '../../../../sdk/service';
       dropdownClass="ant-select-skin-panel"
       appendTo="body"
       [items]="options()"
-      [multiple]="false"
-      [closeOnSelect]="true"
+      [multiple]="multiple()"
+      [closeOnSelect]="!multiple()"
+      [hideSelected]="false"
       [ngModel]="value()"
       (ngModelChange)="value.set($event)"
       [compareWith]="compareById"
       [loading]="loaded() && query.isFetching()"
-      [placeholder]="placeholder()"
+      [placeholder]="isEmpty() ? placeholder() : ''"
       [notFoundText]="notFoundText()"
       [searchable]="true"
       [clearable]="true"
@@ -55,8 +56,9 @@ export class SelectApi<T extends BaseEntity> {
   placeholder = input('Selecciona...');
   notFoundText = input('No se encontraron resultados');
   renderOption = input<(item: T) => string>();
+  multiple = input(false);
 
-  value = model<T | null>(null);
+  value = model<T | T[] | null>(null);
   loaded = signal(false);
   private search = signal('');
   private searchTerms = new Subject<string>();
@@ -77,6 +79,10 @@ export class SelectApi<T extends BaseEntity> {
 
   options = computed(() => this.query.data()?.data ?? []);
   hasError = computed(() => this.query.isError());
+  isEmpty = computed(() => {
+    const current = this.value();
+    return Array.isArray(current) ? current.length === 0 : !current;
+  });
 
   constructor() {
     this.searchTerms

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SelectMultipleApi } from '../../../../core/shared/components/select-multiple-api/select-multiple-api';
+import { SelectApi } from '../../../../core/shared/components/select-api/select-api';
 import { injectCrud } from '../../../../core/composables/inject-crud';
 import { RoleService } from '../../services/role';
 import { PermissionService } from '../../../permissions/services/permission';
@@ -10,7 +10,7 @@ import { Permission } from '../../../permissions/models/permission.model';
 @Component({
   selector: 'app-role-form',
   standalone: true,
-  imports: [ReactiveFormsModule, SelectMultipleApi],
+  imports: [ReactiveFormsModule, SelectApi],
   templateUrl: './role-form.html',
   styleUrls: ['./role-form.css', '../../../../core/shared/styles/crud.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
