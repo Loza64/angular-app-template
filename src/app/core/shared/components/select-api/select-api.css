@@ -1,8 +1,3 @@
-/* ============================================================
-   Select API — skin tipo Ant Design para ng-select
-   Autocontenido: no depende de importar ng-select/themes/*.css
-   ============================================================ */
-
 :host {
   --select-bg: #ffffff;
   --select-bg-disabled: #f5f5f5;
@@ -191,9 +186,6 @@
 }
 
 ::ng-deep .ant-select-skin-panel {
-  /* appendTo="body" saca el panel del árbol del :host, así que las
-     variables no se heredan: se redefinen aquí para que el panel
-     siempre tenga sus valores sin depender de la herencia. */
   --select-border: #d9d9d9;
   --select-radius: 6px;
   --select-text: rgba(0, 0, 0, 0.88);
@@ -255,7 +247,6 @@
   text-align: center;
 }
 
-/* ---------- Modo múltiple: tags estilo AntD ---------- */
 ::ng-deep .ant-select-skin.ng-select-multiple .ng-select-container {
   height: auto;
   min-height: var(--select-height);
