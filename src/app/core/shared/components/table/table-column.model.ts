@@ -1,13 +1,19 @@
 import { Directive, TemplateRef, input } from '@angular/core';
 import { BaseEntity } from '../../../../sdk/entities/base-entity.model';
 
-export interface TableColumn<T extends BaseEntity> {
+type ColumnKey<T> = keyof T | string;
+
+export interface TableColumn<T extends BaseEntity, K extends keyof T = keyof T> {
   title: string;
-  dataIndex?: keyof T;
-  key: keyof T | string;
+  dataIndex?: K;
+  key: ColumnKey<T>;
   width?: string;
   align?: 'left' | 'center' | 'right';
-  render?: (value: any, record: T, index: number) => string;
+  render?: (
+    value: K extends keyof T ? T[K] : unknown,
+    record: T,
+    index: number
+  ) => string;
 }
 
 @Directive({ selector: '[appTableCell]', standalone: true })
