@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box app-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  :host {
+    max-width: none;
+  }
+}

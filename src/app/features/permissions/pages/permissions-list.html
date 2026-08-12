@@ -1,24 +1,20 @@
 <div class="page">
-  <div class="toolbar">
-    <div class="search-box">
-      <app-icon name="search" [size]="16" />
-      <input type="text" placeholder="Buscar permisos..." [value]="search()" (input)="onSearch($event.target.value)" />
-    </div>
-    <span class="toolbar-spacer"></span>
-    <span class="hint">Los permisos se generan automáticamente a partir de los endpoints del backend.</span>
-  </div>
+  <app-toolbar>
+    <app-search-box placeholder="Buscar permisos..." [value]="search()" (valueChange)="onSearch($event)" />
+    <span toolbarActions class="hint">Los permisos se generan automáticamente a partir de los endpoints del backend.</span>
+  </app-toolbar>
 
   <app-table [columns]="columns" [data]="permissions()" [loading]="permissionsQuery.isLoading()" [rowKey]="'id'"
     emptyText="No se encontraron permisos." [pagination]="pagination()" (pageChange)="goToPage($event)">
     <ng-template appTableCell="method" let-record>
-      <span class="badge badge-neutral">{{ record.method }}</span>
+      <app-badge variant="neutral">{{ record.method }}</app-badge>
     </ng-template>
 
     <ng-template appTableCell="actions" let-record>
       <div class="row-actions">
-        <button type="button" class="icon-btn" (click)="openEdit(record)" title="Editar título">
+        <app-button variant="icon" tooltip="Editar título" (clicked)="openEdit(record)">
           <app-icon name="edit" [size]="15" />
-        </button>
+        </app-button>
       </div>
     </ng-template>
   </app-table>

@@ -13,6 +13,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth';
+import { FormField } from '../../../../core/shared/components/form-field/form-field';
+import { Button } from '../../../../core/shared/components/button/button';
 
 // Validador a nivel de grupo: compara password y confirmPassword
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -24,13 +26,9 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormField, Button],
   templateUrl: './signup.html',
-  styleUrls: [
-    './signup.css',
-    '../../../../core/shared/styles/crud.css',
-    '../../../../core/shared/styles/auth.css',
-  ],
+  styleUrl: './signup.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupPage {

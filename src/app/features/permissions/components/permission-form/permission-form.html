@@ -1,22 +1,20 @@
 <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-  <div class="form-field">
-    <label for="permission-title">Título</label>
-    <input id="permission-title" type="text" formControlName="title" required />
-    @if (form.get('title')?.invalid && form.get('title')?.touched) {
-    <span class="form-error">El título es obligatorio.</span>
-    }
-  </div>
+  <app-form-field
+    label="Título"
+    for="permission-title"
+    [error]="form.get('title')?.invalid && form.get('title')?.touched ? 'El título es obligatorio.' : ''"
+  >
+    <input id="permission-title" class="field-input" type="text" formControlName="title" required />
+  </app-form-field>
 
   @if (permission(); as p) {
-  <div class="form-field">
-    <label>Método</label>
-    <input type="text" [value]="p.method" disabled />
-  </div>
+  <app-form-field label="Método">
+    <input class="field-input" type="text" [value]="p.method" disabled />
+  </app-form-field>
 
-  <div class="form-field">
-    <label>Ruta</label>
-    <input type="text" [value]="p.path" disabled />
-  </div>
+  <app-form-field label="Ruta">
+    <input class="field-input" type="text" [value]="p.path" disabled />
+  </app-form-field>
   }
 
   @if (formError()) {
@@ -24,9 +22,9 @@
   }
 
   <div class="form-actions">
-    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
-    <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid">
+    <app-button variant="ghost" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [disabled]="saving() || form.invalid">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
-    </button>
+    </app-button>
   </div>
 </form>

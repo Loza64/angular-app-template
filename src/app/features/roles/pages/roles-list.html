@@ -1,47 +1,42 @@
-<div class="toolbar">
-  <div class="search-box">
-    <app-icon name="search" [size]="16" />
-    <input type="text" placeholder="Buscar roles..." [value]="search()" (input)="onSearch($event.target.value)" />
-  </div>
+<app-toolbar>
+  <app-search-box placeholder="Buscar roles..." [value]="search()" (valueChange)="onSearch($event)" />
 
   <label class="checkbox-label">
     <input type="checkbox" [checked]="deleted()" (change)="deleted.set($event.target.checked)" />
     Mostrar eliminados
   </label>
 
-  <span class="toolbar-spacer"></span>
-
-  <button type="button" class="btn btn-primary" (click)="openCreate()">
+  <app-button toolbarActions variant="primary" (clicked)="openCreate()">
     <app-icon name="plus" [size]="16" />
     Nuevo rol
-  </button>
-</div>
+  </app-button>
+</app-toolbar>
 
 <app-table [columns]="columns" [data]="roles()" [loading]="rolesQuery.isLoading()"
   emptyText="No se encontraron roles." [pagination]="pagination()" (pageChange)="goToPage($event)">
   <ng-template appTableCell="status" let-record>
     @if (record.deletedAt) {
-    <span class="badge badge-neutral">Eliminado</span>
+    <app-badge variant="neutral">Eliminado</app-badge>
     } @else if (record.active) {
-    <span class="badge badge-success">Activo</span>
+    <app-badge variant="success">Activo</app-badge>
     } @else {
-    <span class="badge badge-danger">Inactivo</span>
+    <app-badge variant="danger">Inactivo</app-badge>
     }
   </ng-template>
 
   <ng-template appTableCell="actions" let-record>
     <div class="row-actions">
       @if (record.deletedAt) {
-      <button type="button" class="icon-btn icon-btn-success" (click)="restore(record)" title="Restaurar">
+      <app-button variant="icon-success" tooltip="Restaurar" (clicked)="restore(record)">
         <app-icon name="restore" [size]="15" />
-      </button>
+      </app-button>
       } @else {
-      <button type="button" class="icon-btn" (click)="openEdit(record)" title="Editar">
+      <app-button variant="icon" tooltip="Editar" (clicked)="openEdit(record)">
         <app-icon name="edit" [size]="15" />
-      </button>
-      <button type="button" class="icon-btn icon-btn-danger" (click)="remove(record)" title="Eliminar">
+      </app-button>
+      <app-button variant="icon-danger" tooltip="Eliminar" (clicked)="remove(record)">
         <app-icon name="trash" [size]="15" />
-      </button>
+      </app-button>
       }
     </div>
   </ng-template>

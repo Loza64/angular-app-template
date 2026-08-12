@@ -2,21 +2,20 @@
   @if (loadingEdit()) {
   <div class="form-loading-state">Cargando datos del rol...</div>
   } @else {
-  <div class="form-field">
-    <label for="role-name">Nombre</label>
-    <input id="role-name" type="text" formControlName="name" required />
-    @if (form.get('name')?.invalid && form.get('name')?.touched) {
-    <span class="form-error">El nombre es obligatorio.</span>
-    }
-  </div>
+  <app-form-field
+    label="Nombre"
+    for="role-name"
+    [error]="form.get('name')?.invalid && form.get('name')?.touched ? 'El nombre es obligatorio.' : ''"
+  >
+    <input id="role-name" class="field-input" type="text" formControlName="name" required />
+  </app-form-field>
 
-  <div class="form-field">
-    <label>Permisos</label>
+  <app-form-field label="Permisos">
     <app-select-api [multiple]="true" [service]="permissionService" queryKey="permissions-select"
       [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value"
       (valueChange)="onPermissionsChange($event)" placeholder="Selecciona permisos"
       notFoundText="No se encontraron permisos" />
-  </div>
+  </app-form-field>
 
   <label class="form-toggle">
     <input type="checkbox" formControlName="active" />
@@ -29,9 +28,9 @@
   }
 
   <div class="form-actions">
-    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
-    <button type="submit" class="btn btn-primary" [disabled]="saving() || form.invalid || loadingEdit()">
+    <app-button variant="ghost" (clicked)="cancel()">Cancelar</app-button>
+    <app-button type="submit" variant="primary" [disabled]="saving() || form.invalid || loadingEdit()">
       {{ saving() ? 'Guardando...' : 'Guardar' }}
-    </button>
+    </app-button>
   </div>
 </form>

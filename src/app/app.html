@@ -3,3 +3,12 @@
 } @else {
   <router-outlet />
 }
+
+<app-button
+  class="theme-toggle"
+  variant="icon"
+  [tooltip]="theme.theme() === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+  (clicked)="theme.toggle()"
+>
+  <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" [size]="16" />
+</app-button>

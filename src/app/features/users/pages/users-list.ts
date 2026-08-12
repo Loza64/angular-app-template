@@ -3,6 +3,10 @@ import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { Table } from '../../../core/shared/components/table/table';
 import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
+import { Toolbar } from '../../../core/shared/components/toolbar/toolbar';
+import { SearchBox } from '../../../core/shared/components/search-box/search-box';
+import { Button } from '../../../core/shared/components/button/button';
+import { Badge } from '../../../core/shared/components/badge/badge';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { injectCrud } from '../../../core/composables/inject-crud';
 import { UserService } from '../services/user';
@@ -12,9 +16,9 @@ import { UserForm } from '../components/user-form/user-form';
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [Icon, Modal, Table, TableCellDirective, UserForm],
+  imports: [Icon, Modal, Table, TableCellDirective, UserForm, Toolbar, SearchBox, Button, Badge],
   templateUrl: './users-list.html',
-  styleUrls: ['./users-list.css', '../../../core/shared/styles/crud.css'],
+  styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersList {

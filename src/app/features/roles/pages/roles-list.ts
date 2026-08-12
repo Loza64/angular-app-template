@@ -3,6 +3,10 @@ import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { Table } from '../../../core/shared/components/table/table';
 import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
+import { Toolbar } from '../../../core/shared/components/toolbar/toolbar';
+import { SearchBox } from '../../../core/shared/components/search-box/search-box';
+import { Button } from '../../../core/shared/components/button/button';
+import { Badge } from '../../../core/shared/components/badge/badge';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { injectCrud } from '../../../core/composables/inject-crud';
 import { RoleService } from '../services/role';
@@ -12,9 +16,9 @@ import { RoleForm } from '../components/role-form/role-form';
 @Component({
   selector: 'app-roles-list',
   standalone: true,
-  imports: [Icon, Modal, Table, TableCellDirective, RoleForm],
+  imports: [Icon, Modal, Table, TableCellDirective, RoleForm, Toolbar, SearchBox, Button, Badge],
   templateUrl: './roles-list.html',
-  styleUrls: ['./roles-list.css', '../../../core/shared/styles/crud.css'],
+  styleUrl: './roles-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesList {

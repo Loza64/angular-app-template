@@ -6,17 +6,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth';
+import { FormField } from '../../../../core/shared/components/form-field/form-field';
+import { Button } from '../../../../core/shared/components/button/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormField, Button],
   templateUrl: './login.html',
-  styleUrls: [
-    './login.css',
-    '../../../../core/shared/styles/crud.css',
-    '../../../../core/shared/styles/auth.css',
-  ],
+  styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPage {

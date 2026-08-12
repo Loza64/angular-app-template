@@ -1,18 +1,18 @@
 :host {
-  --select-bg: #ffffff;
-  --select-bg-disabled: #f5f5f5;
-  --select-border: #d9d9d9;
-  --select-border-hover: #4096ff;
-  --select-border-active: #4096ff;
+  --select-bg: var(--surface);
+  --select-bg-disabled: var(--surface-muted);
+  --select-border: var(--border);
+  --select-border-hover: var(--primary);
+  --select-border-active: var(--primary);
   --select-shadow-active: rgba(5, 145, 255, 0.1);
-  --select-text: rgba(0, 0, 0, 0.88);
-  --select-placeholder: rgba(0, 0, 0, 0.25);
+  --select-text: var(--text);
+  --select-placeholder: var(--text-muted);
   --select-radius: 6px;
   --select-height: 32px;
-  --select-option-hover: #f5f5f5;
-  --select-option-selected-bg: #e6f4ff;
-  --select-option-selected-text: rgba(0, 0, 0, 0.88);
-  --select-error: #ff4d4f;
+  --select-option-hover: var(--surface-muted);
+  --select-option-selected-bg: var(--primary-soft);
+  --select-option-selected-text: var(--text);
+  --select-error: var(--danger);
   --select-font-size: 14px;
   display: block;
   width: 100%;
@@ -142,8 +142,8 @@
   margin: auto;
   width: 8px;
   height: 8px;
-  border-right: 1.5px solid rgba(0, 0, 0, 0.45);
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.45);
+  border-right: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
   transform: rotate(45deg) translate(-2px, -2px);
   transition: transform 0.2s ease;
 }
@@ -160,12 +160,12 @@
   height: 100%;
   flex-shrink: 0;
   z-index: 3;
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--select-placeholder);
   cursor: pointer;
 }
 
 ::ng-deep .ant-select-skin .ng-clear-wrapper:hover .ng-clear {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--select-text);
 }
 
 ::ng-deep .ant-select-skin .ng-spinner-loader {
@@ -186,17 +186,17 @@
 }
 
 ::ng-deep .ant-select-skin-panel {
-  --select-border: #d9d9d9;
+  --select-border: var(--border);
   --select-radius: 6px;
-  --select-text: rgba(0, 0, 0, 0.88);
-  --select-option-hover: #f5f5f5;
-  --select-option-selected-bg: #e6f4ff;
-  --select-option-selected-text: rgba(0, 0, 0, 0.88);
+  --select-text: var(--text);
+  --select-option-hover: var(--surface-muted);
+  --select-option-selected-bg: var(--primary-soft);
+  --select-option-selected-text: var(--text);
   --select-font-size: 14px;
 
   position: absolute;
   z-index: 1050;
-  background-color: #ffffff;
+  background-color: var(--surface);
   border: 1px solid var(--select-border);
   border-radius: var(--select-radius);
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
@@ -236,12 +236,12 @@
 }
 
 ::ng-deep .ant-select-skin-panel .ng-option-disabled {
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
 ::ng-deep .ant-select-skin-panel .ng-notfound {
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--text-muted);
   padding: 8px 12px;
   font-size: var(--select-font-size);
   text-align: center;
@@ -265,7 +265,7 @@
 ::ng-deep .ant-select-skin.ng-select-multiple .ng-value {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: var(--surface-muted);
   border: 1px solid transparent;
   border-radius: 4px;
   color: var(--select-text);
@@ -292,14 +292,14 @@
   align-items: center;
   justify-content: center;
   margin-left: 4px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--text-muted);
   cursor: pointer;
   font-style: normal;
   font-size: 10px;
 }
 
 ::ng-deep .ant-select-skin.ng-select-multiple .ng-value-icon:hover {
-  color: rgba(0, 0, 0, 0.88);
+  color: var(--text);
 }
 
 ::ng-deep .ant-select-skin.ng-select-multiple .ng-input {

@@ -1,5 +1,15 @@
 @import "tailwindcss";
+@import "./app/core/shared/styles/utilities.css";
 
+/*
+ * Design tokens: única fuente de verdad para toda la app.
+ * Los componentes solo consumen var(--x), nunca redefinen estos valores
+ * (antes --primary, --danger, --sidebar-*, etc. vivían duplicados en el
+ * :host de app.css, lo que rompía el modo oscuro: una custom property
+ * declarada directamente en un elemento gana siempre sobre la heredada
+ * desde un ancestro como <html>, así que [data-theme='dark'] en <html>
+ * nunca los hubiera podido sobreescribir).
+ */
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;
@@ -12,6 +22,23 @@
   --radius-md: 10px;
   --radius-lg: 14px;
 
+  --primary: #4338ca;
+  --primary-hover: #372ea8;
+  --primary-soft: #eef0fd;
+
+  --danger: #dc2626;
+  --danger-soft: #fdeded;
+  --success: #16794f;
+  --success-soft: #e7f6ee;
+  --warning: #b45309;
+  --warning-soft: #fdf3e3;
+
+  --sidebar-bg: #14161f;
+  --sidebar-text: #b7bac6;
+  --sidebar-text-active: #ffffff;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
   --ng-selected-color-bg: #14161f;
   --ng-selected-color-text: white;
 
@@ -23,7 +50,36 @@
   --select-option-hover-text: var(--text);
   --select-selected-hover-bg: #1f2330;
 
-  --primary-color: #4338ca;
+  --primary-color: var(--primary);
+}
+
+[data-theme='dark'] {
+  --bg: #0f1117;
+  --surface: #171a23;
+  --surface-muted: #1f232e;
+  --border: #2b303c;
+  --text: #e8e9ed;
+  --text-muted: #9298a6;
+
+  --primary: #6366f1;
+  --primary-hover: #7678f3;
+  --primary-soft: #23253f;
+
+  --danger: #f87171;
+  --danger-soft: #3a2226;
+  --success: #4ade80;
+  --success-soft: #1c3327;
+  --warning: #fbbf24;
+  --warning-soft: #3a2f16;
+
+  --sidebar-bg: #0b0c11;
+  --sidebar-text: #9298a6;
+  --sidebar-text-active: #ffffff;
+
+  --ng-selected-color-bg: #6366f1;
+  --ng-selected-color-text: white;
+
+  --select-selected-hover-bg: #4b4de0;
 }
 
 * {

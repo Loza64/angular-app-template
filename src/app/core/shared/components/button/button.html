@@ -1,0 +1,15 @@
+<button
+  [type]="type()"
+  class="btn"
+  [class.btn-primary]="variant() === 'primary'"
+  [class.btn-ghost]="variant() === 'ghost'"
+  [class.icon-btn]="variant().startsWith('icon')"
+  [class.icon-btn-danger]="variant() === 'icon-danger'"
+  [class.icon-btn-success]="variant() === 'icon-success'"
+  [class.btn-full]="fullWidth()"
+  [disabled]="disabled()"
+  [attr.title]="tooltip() || null"
+  (click)="clicked.emit()"
+>
+  <ng-content></ng-content>
+</button>

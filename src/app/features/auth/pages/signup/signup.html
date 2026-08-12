@@ -9,100 +9,64 @@
     <p class="auth-subtitle">Completa tus datos para registrarte</p>
 
     <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-      <div class="form-field">
-        <label for="username">Usuario</label>
-        <input
-          id="username"
-          type="text"
-          formControlName="username"
-          autocomplete="username"
-          required
-        />
-        @if (form.get('username')?.invalid && form.get('username')?.touched) {
-        <span class="form-error">El usuario es obligatorio.</span>
-        }
-      </div>
+      <app-form-field
+        label="Usuario"
+        for="username"
+        [error]="form.get('username')?.invalid && form.get('username')?.touched ? 'El usuario es obligatorio.' : ''"
+      >
+        <input id="username" class="field-input" type="text" formControlName="username" autocomplete="username" required />
+      </app-form-field>
 
       <div class="auth-row">
-        <div class="form-field">
-          <label for="name">Nombre</label>
-          <input
-            id="name"
-            type="text"
-            formControlName="name"
-            autocomplete="given-name"
-            required
-          />
-          @if (form.get('name')?.invalid && form.get('name')?.touched) {
-          <span class="form-error">El nombre es obligatorio.</span>
-          }
-        </div>
+        <app-form-field
+          label="Nombre"
+          for="name"
+          [error]="form.get('name')?.invalid && form.get('name')?.touched ? 'El nombre es obligatorio.' : ''"
+        >
+          <input id="name" class="field-input" type="text" formControlName="name" autocomplete="given-name" required />
+        </app-form-field>
 
-        <div class="form-field">
-          <label for="surname">Apellido</label>
-          <input
-            id="surname"
-            type="text"
-            formControlName="surname"
-            autocomplete="family-name"
-            required
-          />
-          @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
-          <span class="form-error">El apellido es obligatorio.</span>
-          }
-        </div>
+        <app-form-field
+          label="Apellido"
+          for="surname"
+          [error]="form.get('surname')?.invalid && form.get('surname')?.touched ? 'El apellido es obligatorio.' : ''"
+        >
+          <input id="surname" class="field-input" type="text" formControlName="surname" autocomplete="family-name" required />
+        </app-form-field>
       </div>
 
-      <div class="form-field">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          autocomplete="email"
-          required
-        />
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="form-error">Ingresa un email válido.</span>
-        }
-      </div>
+      <app-form-field
+        label="Email"
+        for="email"
+        [error]="form.get('email')?.invalid && form.get('email')?.touched ? 'Ingresa un email válido.' : ''"
+      >
+        <input id="email" class="field-input" type="email" formControlName="email" autocomplete="email" required />
+      </app-form-field>
 
-      <div class="form-field">
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          autocomplete="new-password"
-          required
-        />
-        <span class="hint">Mínimo 8 caracteres</span>
-        @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <span class="form-error">La contraseña debe tener al menos 8 caracteres.</span>
-        }
-      </div>
+      <app-form-field
+        label="Contraseña"
+        for="password"
+        hint="Mínimo 8 caracteres"
+        [error]="form.get('password')?.invalid && form.get('password')?.touched ? 'La contraseña debe tener al menos 8 caracteres.' : ''"
+      >
+        <input id="password" class="field-input" type="password" formControlName="password" autocomplete="new-password" required />
+      </app-form-field>
 
-      <div class="form-field">
-        <label for="confirmPassword">Confirmar contraseña</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          formControlName="confirmPassword"
-          autocomplete="new-password"
-          required
-        />
-        @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
-        <span class="form-error">Las contraseñas no coinciden.</span>
-        }
-      </div>
+      <app-form-field
+        label="Confirmar contraseña"
+        for="confirmPassword"
+        [error]="form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched ? 'Las contraseñas no coinciden.' : ''"
+      >
+        <input id="confirmPassword" class="field-input" type="password" formControlName="confirmPassword" autocomplete="new-password" required />
+      </app-form-field>
 
       @if (error()) {
         <span class="form-error">{{ error() }}</span>
       }
 
-      <button type="submit" class="btn btn-primary auth-submit" [disabled]="loading() || form.invalid">
+      <app-button type="submit" variant="primary" [fullWidth]="true" [disabled]="loading() || form.invalid">
         {{ loading() ? 'Creando cuenta...' : 'Crear cuenta' }}
-      </button>
+      </app-button>
     </form>
 
     <p class="auth-footer">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>

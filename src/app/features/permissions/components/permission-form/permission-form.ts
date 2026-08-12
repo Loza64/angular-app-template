@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormField } from '../../../../core/shared/components/form-field/form-field';
+import { Button } from '../../../../core/shared/components/button/button';
 import { injectCrud } from '../../../../core/composables/inject-crud';
 import { PermissionService } from '../../services/permission';
 import { Permission } from '../../models/permission.model';
@@ -7,9 +9,9 @@ import { Permission } from '../../models/permission.model';
 @Component({
   selector: 'app-permission-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormField, Button],
   templateUrl: './permission-form.html',
-  styleUrls: ['./permission-form.css', '../../../../core/shared/styles/crud.css'],
+  styleUrl: './permission-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionForm {

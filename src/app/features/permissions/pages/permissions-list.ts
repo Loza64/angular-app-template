@@ -3,6 +3,10 @@ import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
 import { Table } from '../../../core/shared/components/table/table';
 import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
+import { Toolbar } from '../../../core/shared/components/toolbar/toolbar';
+import { SearchBox } from '../../../core/shared/components/search-box/search-box';
+import { Button } from '../../../core/shared/components/button/button';
+import { Badge } from '../../../core/shared/components/badge/badge';
 import { injectFindAll } from '../../../core/composables/inject-find-all';
 import { PermissionService } from '../services/permission';
 import { Permission } from '../models/permission.model';
@@ -11,9 +15,9 @@ import { PermissionForm } from '../components/permission-form/permission-form';
 @Component({
   selector: 'app-permissions-list',
   standalone: true,
-  imports: [Icon, Modal, Table, TableCellDirective, PermissionForm],
+  imports: [Icon, Modal, Table, TableCellDirective, PermissionForm, Toolbar, SearchBox, Button, Badge],
   templateUrl: './permissions-list.html',
-  styleUrls: ['./permissions-list.css', '../../../core/shared/styles/crud.css'],
+  styleUrl: './permissions-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsList {

@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectApi } from '../../../../core/shared/components/select-api/select-api';
+import { FormField } from '../../../../core/shared/components/form-field/form-field';
+import { Button } from '../../../../core/shared/components/button/button';
 import { injectCrud } from '../../../../core/composables/inject-crud';
 import { UserService } from '../../services/user';
 import { RoleService } from '../../../roles/services/role';
@@ -10,9 +12,9 @@ import { Role } from '../../../roles/models/role.model';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [ReactiveFormsModule, SelectApi],
+  imports: [ReactiveFormsModule, SelectApi, FormField, Button],
   templateUrl: './user-form.html',
-  styleUrls: ['./user-form.css', '../../../../core/shared/styles/crud.css'],
+  styleUrl: './user-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserForm {
