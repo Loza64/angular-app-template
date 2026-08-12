@@ -22,7 +22,6 @@ export class UserForm {
   private userService = inject(UserService);
   protected roleService = inject(RoleService);
 
-  /** null = creando un usuario nuevo; con id = editando ese usuario. */
   userId = input<string | number | null>(null);
   saved = output<void>();
   cancelled = output<void>();

@@ -10,11 +10,6 @@ function getInitialTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-/**
- * Maneja el tema claro/oscuro de toda la app.
- * Aplica `data-theme` en <html>, donde `styles.css` define los tokens
- * de color para cada modo, y persiste la preferencia del usuario.
- */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   readonly theme = signal<Theme>(getInitialTheme());

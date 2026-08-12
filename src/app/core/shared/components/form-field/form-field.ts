@@ -9,7 +9,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class FormField {
   label = input('');
-  /** Debe coincidir con el [id] del control proyectado, para el label. */
   for = input('');
   hint = input('');
   error = input('');

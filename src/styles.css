@@ -1,15 +1,6 @@
 @import "tailwindcss";
 @import "./app/core/shared/styles/utilities.css";
 
-/*
- * Design tokens: única fuente de verdad para toda la app.
- * Los componentes solo consumen var(--x), nunca redefinen estos valores
- * (antes --primary, --danger, --sidebar-*, etc. vivían duplicados en el
- * :host de app.css, lo que rompía el modo oscuro: una custom property
- * declarada directamente en un elemento gana siempre sobre la heredada
- * desde un ancestro como <html>, así que [data-theme='dark'] en <html>
- * nunca los hubiera podido sobreescribir).
- */
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;

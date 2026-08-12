@@ -15,7 +15,6 @@ export interface SignUpPayload {
   password: string;
 }
 
-/** Query key bajo el que se cachea el perfil de la sesión activa. */
 export const SESSION_QUERY_KEY = ['session-profile'];
 
 @Injectable({ providedIn: 'root' })

@@ -18,7 +18,6 @@ export class PermissionForm {
   private fb = inject(FormBuilder);
   private permissionService = inject(PermissionService);
 
-  /** El permiso a editar (los permisos no se crean desde la UI, solo se edita su título). */
   permission = input<Permission | null>(null);
   saved = output<void>();
   cancelled = output<void>();
