@@ -1,9 +1,9 @@
-import { HttpClient, HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, firstValueFrom, from, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ON_FORBIDDEN, ON_UNAUTHORIZED, IS_RETRY_AFTER_REFRESH } from '../http/http-context';
+import { ON_FORBIDDEN, ON_UNAUTHORIZED, IS_RETRY_AFTER_REFRESH, SKIP_AUTH } from '../http/http-context';
 import { SdkSettingsService } from '../services/sdk-settings';
 
 interface RefreshResponse { token: string; refreshToken: string; }
@@ -16,7 +16,11 @@ function refreshAccessToken(http: HttpClient, settings: SdkSettingsService): Pro
   if (!refreshToken) return Promise.reject(new Error('No refresh token available'));
 
   refreshPromise = firstValueFrom(
-    http.post<RefreshResponse>(`${environment.apiOrigin}/api/auth/refresh`, { refreshToken }),
+    http.post<RefreshResponse>(
+      `${environment.apiOrigin}/api/auth/refresh`,
+      { refreshToken },
+      { context: new HttpContext().set(SKIP_AUTH, true) },
+    ),
   ).finally(() => { refreshPromise = null; });
 
   return refreshPromise;
@@ -44,6 +48,8 @@ function handleUnauthorized(req: HttpRequest<unknown>, next: HttpHandlerFn, http
 }
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.context.get(SKIP_AUTH)) return next(req);
+
   const settings = inject(SdkSettingsService);
   const http = inject(HttpClient);
   const router = inject(Router);

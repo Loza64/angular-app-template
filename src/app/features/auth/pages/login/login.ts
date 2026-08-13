@@ -31,8 +31,7 @@ export class LoginPage {
   });
 
   private loginMutation = injectMutation(() => ({
-    mutationFn: () =>
-      firstValueFrom(this.authService.login(this.form.value.username, this.form.value.password)),
+    mutationFn: () => this.authService.login(this.form.value.username, this.form.value.password),
     onSuccess: () => this.router.navigateByUrl('/dashboard'),
     onError: (err: unknown) => {
       const message = err instanceof HttpErrorResponse ? (err.error?.message as string | undefined) : undefined;

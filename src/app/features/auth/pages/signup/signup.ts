@@ -54,7 +54,7 @@ export class SignupPage {
   private signupMutation = injectMutation(() => ({
     mutationFn: () => {
       const { confirmPassword, ...payload } = this.form.value;
-      return firstValueFrom(this.authService.signup(payload));
+      return this.authService.signup(payload);
     },
     onSuccess: () => this.router.navigateByUrl('/dashboard'),
     onError: (err: unknown) => {

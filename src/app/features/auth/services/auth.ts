@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, firstValueFrom, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { environment } from '../../../../environments/environment';
 import { SessionResponse } from '../../../sdk/responses/session-response.model';
@@ -43,16 +43,20 @@ export class AuthService {
     });
   }
 
-  login(username: string, password: string): Observable<SessionResponse> {
-    return this.http.post<SessionResponse>(`${this.baseUrl}/login`, { username, password }).pipe(
-      tap((res) => this.setSession(res)),
+  async login(username: string, password: string): Promise<SessionResponse> {
+    const res = await firstValueFrom(
+      this.http.post<SessionResponse>(`${this.baseUrl}/login`, { username, password }),
     );
+    this.setSession(res);
+    return res;
   }
 
-  signup(payload: SignUpPayload): Observable<SessionResponse> {
-    return this.http.post<SessionResponse>(`${this.baseUrl}/signup`, payload).pipe(
-      tap((res) => this.setSession(res)),
+  async signup(payload: SignUpPayload): Promise<SessionResponse> {
+    const res = await firstValueFrom(
+      this.http.post<SessionResponse>(`${this.baseUrl}/signup`, payload),
     );
+    this.setSession(res);
+    return res;
   }
 
   profile(): Promise<User> {
