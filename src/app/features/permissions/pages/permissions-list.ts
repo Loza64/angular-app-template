@@ -46,7 +46,7 @@ export class PermissionsList {
   });
 
   protected columns: TableColumn<Permission>[] = [
-    { title: 'Título', dataIndex: 'title', key: 'title', render: (value) => value ?? 'N/A' },
+    { title: 'Título', dataIndex: 'title', key: 'title', render: (value) => (value == null ? 'N/A' : String(value)) },
     { title: 'Método', dataIndex: 'method', key: 'method' },
     { title: 'Ruta', dataIndex: 'path', key: 'path' },
     { title: '', key: 'actions', width: '60px' },

@@ -15,6 +15,8 @@
 - [11. Convenciones y decisiones de diseño](#11-convenciones-y-decisiones-de-diseño)
 - [12. Glosario de archivos fuente relevantes](#12-glosario-de-archivos-fuente-relevantes)
 - [13. Ejemplos de uso](#13-ejemplos-de-uso)
+- [14. Calidad de código: ESLint y convención de commits](#14-calidad-de-código-eslint-y-convención-de-commits)
+- [15. Personalización de colores del tema](#15-personalización-de-colores-del-tema)
 
 ---
 
@@ -745,3 +747,62 @@ await this.productService.delete({
   onForbidden: () => this.formError.set('No tienes permiso para eliminar este producto.'),
 });
 ```
+---
+
+## 14. Calidad de código: ESLint y convención de commits
+
+El proyecto usa **ESLint** (`eslint.config.js`, flat config) con `typescript-eslint` y `angular-eslint`, más **Husky** y **commitlint** para garantizar que nada roto ni con mensajes de commit inconsistentes llegue al repositorio.
+
+### Scripts disponibles
+
+```bash
+pnpm lint       # revisa src/**/*.{ts,html} sin modificar nada
+pnpm lint:fix   # revisa y corrige automáticamente lo que se pueda
+```
+
+### Qué pasa al hacer `git commit`
+
+1. **Hook `pre-commit`** (`.husky/pre-commit`): ejecuta `pnpm lint:fix`.
+   - Si ESLint corrige algo automáticamente (comillas, orden de imports, etc.), esos cambios se vuelven a agregar al commit en curso.
+   - Si queda **algún error que no se pudo corregir solo** (variable sin usar, `any` explícito no permitido, código inaccesible, problemas de accesibilidad en plantillas, etc.), el script termina con código distinto de cero y **el commit se cancela**. Hay que corregir el error señalado en la terminal, volver a `git add` y reintentar.
+2. **Hook `commit-msg`** (`.husky/commit-msg`): corre `commitlint` sobre el mensaje del commit y exige el formato de **Conventional Commits**:
+
+   ```
+   <tipo>(<scope opcional>): <descripción>
+   ```
+
+   Tipos permitidos (configurados en `commitlint.config.js`): `feat`, `fix`, `update`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+
+   Ejemplos válidos:
+   ```
+   feat: agrega selector de colores por tema
+   fix(auth): corrige deadlock del refresh token
+   update: sube versión de tanstack query
+   ```
+
+   Un mensaje como `git commit -m "cambios varios"` es **rechazado** porque no trae un tipo reconocido.
+
+### Primera vez en una copia nueva del repo
+
+Los hooks de Husky se instalan solos gracias al script `"prepare": "husky"` de `package.json`, que corre automáticamente después de `pnpm install`. No hace falta ningún paso manual adicional.
+
+---
+
+## 15. Personalización de colores del tema
+
+Ruta: **Panel → Apariencia** (`/dashboard/settings`).
+
+### Cómo funciona
+
+- El tema base sigue funcionando igual que antes: `ThemeService` (`core/services/theme.ts`) guarda si el modo activo es `light` u `dark` en el atributo `data-theme` del `<html>` y en `localStorage` (`theme`).
+- `ThemeColorsService` (`core/services/theme-colors.ts`) es nuevo: guarda **una paleta de colores base por modo** (claro y oscuro por separado) en `localStorage` bajo la clave `theme-colors`, y aplica las variables CSS del tema (`--primary`, `--bg`, `--surface`, `--text`, etc.) sobre `<html>` cada vez que cambian los colores o el modo activo.
+- El usuario solo elige **8 colores "base"** por modo (primario, fondo, superficie, texto, barra lateral, peligro, éxito, advertencia) — el resto de variantes (hover, versiones "soft", bordes, texto apagado, colores de `ng-select`, etc.) se **calculan automáticamente** a partir de esos 8 colores (`core/shared/models/theme-palette.model.ts` + `core/shared/utils/color.util.ts`), para que la pantalla sea simple y no haya que configurar veinte campos a mano.
+
+### La vista de personalización (`features/settings/pages/settings-page.*`)
+
+- Dos pestañas, **Modo claro** / **Modo oscuro**, editables de forma independiente (no hace falta estar en modo oscuro para poder editar su paleta).
+- Cada color se elige con un selector visual nativo (círculo de color, `<input type="color">`) **o** escribiendo el código hexadecimal directamente; ambos quedan sincronizados (`core/shared/components/color-field/`).
+- Panel de **vista previa en vivo** que muestra una réplica en miniatura del panel (barra lateral, tarjeta, badges, botones) ya pintada con la paleta que se está editando, sin afectar el resto de la aplicación hasta que se decide aplicarla.
+- Botón **"Restablecer modo claro/oscuro"** (vuelve solo la pestaña activa a los valores originales) y **"Restablecer todo"**.
+- Botón **"Usar este modo ahora"**, visible cuando la pestaña que se edita no es el tema activo, para cambiar el tema activo de la app a esa paleta con un clic.
+- Todo se guarda automáticamente en `localStorage`: al recargar la página o volver más tarde, los colores personalizados siguen ahí.

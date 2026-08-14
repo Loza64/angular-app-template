@@ -1,0 +1,117 @@
+<div class="settings-page">
+  <header class="settings-header">
+    <h2>Personaliza los colores</h2>
+    <p>
+      Elige los colores del panel para el modo claro y el modo oscuro. Los cambios se aplican al
+      instante y se guardan en este navegador, así que no se pierden al recargar.
+    </p>
+  </header>
+
+  <div class="settings-tabs" role="tablist">
+    <button
+      type="button"
+      class="settings-tab"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'light'"
+      [class.settings-tab-active]="activeTab() === 'light'"
+      (click)="selectTab('light')"
+    >
+      <app-icon name="sun" [size]="15" />
+      Modo claro
+      @if (activeTheme() === 'light') {
+        <span class="settings-tab-current">Activo ahora</span>
+      }
+    </button>
+
+    <button
+      type="button"
+      class="settings-tab"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'dark'"
+      [class.settings-tab-active]="activeTab() === 'dark'"
+      (click)="selectTab('dark')"
+    >
+      <app-icon name="moon" [size]="15" />
+      Modo oscuro
+      @if (activeTheme() === 'dark') {
+        <span class="settings-tab-current">Activo ahora</span>
+      }
+    </button>
+  </div>
+
+  <div class="settings-body">
+    <div class="settings-fields">
+      @for (field of fields; track field.key) {
+        <app-color-field
+          [label]="field.label"
+          [hint]="field.hint"
+          [value]="currentPalette()[field.key]"
+          (valueChange)="onColorChange(field.key, $event)"
+        />
+      }
+    </div>
+
+    <div class="settings-preview-wrap">
+      <span class="settings-preview-label">Vista previa en vivo</span>
+
+      <div class="settings-preview" [style]="previewStyles()">
+        <div class="preview-shell">
+          <aside class="preview-sidebar">
+            <span class="preview-sidebar-brand">A</span>
+            <div class="preview-sidebar-link preview-sidebar-link-active">
+              <app-icon name="users" [size]="14" />
+              Usuarios
+            </div>
+            <div class="preview-sidebar-link">
+              <app-icon name="shield" [size]="14" />
+              Roles
+            </div>
+            <div class="preview-sidebar-link">
+              <app-icon name="lock" [size]="14" />
+              Permisos
+            </div>
+          </aside>
+
+          <div class="preview-content">
+            <div class="preview-topbar">Panel de administración</div>
+
+            <div class="preview-card">
+              <div class="preview-card-row">
+                <app-badge variant="success">Activo</app-badge>
+                <app-badge variant="danger">Bloqueado</app-badge>
+                <span class="preview-badge-warning">Pendiente</span>
+              </div>
+
+              <p class="preview-text">Así se verán el texto y las tarjetas con esta paleta.</p>
+
+              <div class="preview-card-actions">
+                <app-button variant="primary">Botón primario</app-button>
+                <app-button variant="ghost">Botón secundario</app-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-actions">
+    <app-button variant="ghost" (clicked)="resetTab()">
+      <app-icon name="undo" [size]="14" />
+      Restablecer {{ activeTab() === 'dark' ? 'modo oscuro' : 'modo claro' }}
+    </app-button>
+
+    <app-button variant="ghost" (clicked)="resetAll()">
+      <app-icon name="undo" [size]="14" />
+      Restablecer todo
+    </app-button>
+
+    <span class="settings-actions-spacer"></span>
+
+    @if (activeTheme() !== activeTab()) {
+      <app-button variant="primary" (clicked)="applyAsActiveTheme()">
+        Usar {{ activeTab() === 'dark' ? 'modo oscuro' : 'modo claro' }} ahora
+      </app-button>
+    }
+  </div>
+</div>

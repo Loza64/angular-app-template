@@ -1,0 +1,29 @@
+<div class="color-field">
+  <label class="color-field-swatch" [attr.title]="'Elegir ' + label().toLowerCase()">
+    <input
+      type="color"
+      class="color-field-picker"
+      [value]="value()"
+      (input)="onPickerInput($event)"
+      [attr.aria-label]="label()"
+    />
+    <span class="color-field-swatch-preview" [style.background]="value()"></span>
+  </label>
+
+  <div class="color-field-info">
+    <span class="color-field-label">{{ label() }}</span>
+    @if (hint()) {
+      <span class="color-field-hint">{{ hint() }}</span>
+    }
+  </div>
+
+  <input
+    type="text"
+    class="color-field-hex field-input"
+    [value]="value()"
+    (change)="onTextChange($event)"
+    spellcheck="false"
+    maxlength="7"
+    aria-label="Código hexadecimal"
+  />
+</div>

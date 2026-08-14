@@ -1,4 +1,4 @@
-import { Directive, TemplateRef, input } from '@angular/core';
+import { Directive, TemplateRef, inject, input } from '@angular/core';
 import { BaseEntity } from '../../../../sdk/entities/base-entity.model';
 
 type ColumnKey<T> = keyof T | string;
@@ -10,7 +10,7 @@ export interface TableColumn<T extends BaseEntity, K extends keyof T = keyof T> 
   width?: string;
   align?: 'left' | 'center' | 'right';
   render?: (
-    value: any,
+    value: unknown,
     record: T,
     index: number
   ) => string;
@@ -19,5 +19,5 @@ export interface TableColumn<T extends BaseEntity, K extends keyof T = keyof T> 
 @Directive({ selector: '[appTableCell]', standalone: true })
 export class TableCellDirective {
   appTableCell = input.required<string>();
-  constructor(public template: TemplateRef<any>) { }
+  readonly template = inject<TemplateRef<unknown>>(TemplateRef);
 }

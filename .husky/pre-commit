@@ -1,0 +1,15 @@
+echo "🔍 Ejecutando ESLint (pnpm lint:fix) antes del commit..."
+
+pnpm lint:fix
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ El commit se canceló: ESLint encontró errores que no pudo corregir automáticamente."
+  echo "   Corrige los errores señalados arriba, agrega los cambios (git add) y vuelve a intentar."
+  exit 1
+fi
+
+echo "✅ Lint OK. Continuando con el commit..."
+
+# Si lint:fix corrigió archivos, re-agrégalos al stage del commit actual.
+git add -u

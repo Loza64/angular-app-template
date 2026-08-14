@@ -17,6 +17,8 @@ import {
   faInbox,
   faSun,
   faMoon,
+  faPalette,
+  faRotateLeft,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -37,7 +39,9 @@ export type IconName =
   | 'x'
   | 'inbox'
   | 'sun'
-  | 'moon';
+  | 'moon'
+  | 'palette'
+  | 'undo';
 
 const ICONS: Record<IconName, IconDefinition> = {
   users: faUsers,
@@ -57,6 +61,8 @@ const ICONS: Record<IconName, IconDefinition> = {
   inbox: faInbox,
   sun: faSun,
   moon: faMoon,
+  palette: faPalette,
+  undo: faRotateLeft,
 };
 
 @Component({

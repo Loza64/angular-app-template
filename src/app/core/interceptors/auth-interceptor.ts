@@ -41,7 +41,11 @@ function handleUnauthorized(req: HttpRequest<unknown>, next: HttpHandlerFn, http
       const onUnauthorized = req.context.get(ON_UNAUTHORIZED);
       settings.removeToken();
       settings.removeRefreshToken();
-      onUnauthorized ? onUnauthorized() : router.navigateByUrl('/login');
+      if (onUnauthorized) {
+        onUnauthorized();
+      } else {
+        router.navigateByUrl('/login');
+      }
       return throwError(() => refreshError);
     }),
   );
@@ -66,7 +70,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
       if (error.status === 403) {
         const onForbidden = req.context.get(ON_FORBIDDEN);
-        onForbidden ? onForbidden() : console.warn('No tienes permiso para realizar esta petición');
+        if (onForbidden) {
+          onForbidden();
+        } else {
+          console.warn('No tienes permiso para realizar esta petición');
+        }
       }
       return throwError(() => error);
     }),

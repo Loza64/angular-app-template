@@ -10,4 +10,5 @@ export const DASHBOARD_MENU: MenuItem[] = [
   { label: 'Usuarios', route: 'users', icon: 'users' },
   { label: 'Roles', route: 'roles', icon: 'shield' },
   { label: 'Permisos', route: 'permissions', icon: 'lock' },
+  { label: 'Apariencia', route: 'settings', icon: 'palette' },
 ];

@@ -26,6 +26,7 @@
   </aside>
 
   @if (sidebarOpen()) {
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
   }
 

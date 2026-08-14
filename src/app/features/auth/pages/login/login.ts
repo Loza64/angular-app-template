@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
-import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';

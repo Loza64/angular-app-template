@@ -37,13 +37,14 @@ export class Table<T extends BaseEntity> {
     return this.cellTemplates().find((t) => t.appTableCell() === key)?.template ?? null;
   }
 
-  cellValue(column: TableColumn<T>, record: T): any {
-    return column.dataIndex ? (record as any)[column.dataIndex as string] : undefined;
+  cellValue(column: TableColumn<T>, record: T): unknown {
+    return column.dataIndex ? (record as Record<string, unknown>)[column.dataIndex as string] : undefined;
   }
 
   cellText(column: TableColumn<T>, record: T, index: number): string {
     const value = this.cellValue(column, record);
-    return column.render ? column.render(value, record, index) : (value ?? '');
+    if (column.render) return column.render(value, record, index);
+    return value == null ? '' : String(value);
   }
 
   trackByRow = (index: number, record: T): string | number => {

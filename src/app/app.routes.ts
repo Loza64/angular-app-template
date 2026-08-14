@@ -34,6 +34,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/permissions/pages/permissions-list').then((m) => m.PermissionsList),
       },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/pages/settings-page').then((m) => m.SettingsPage),
+      },
     ],
   },
 
