@@ -128,6 +128,7 @@
   color: var(--select-option-text);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
+  margin: 5px 0;
 }
 
 .ng-option:hover:not(.ng-option-selected),
