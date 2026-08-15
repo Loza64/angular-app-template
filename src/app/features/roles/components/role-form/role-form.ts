@@ -22,6 +22,7 @@ export class RoleForm {
   private roleService = inject(RoleService);
   protected permissionService = inject(PermissionService);
 
+  /** null = creando un rol nuevo; con id = editando ese rol. */
   roleId = input<string | number | null>(null);
   saved = output<void>();
   cancelled = output<void>();

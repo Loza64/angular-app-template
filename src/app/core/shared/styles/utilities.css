@@ -104,7 +104,7 @@
   height: 34px;
   border-radius: var(--radius-sm);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
   display: inline-flex;
   align-items: center;
   justify-content: center;

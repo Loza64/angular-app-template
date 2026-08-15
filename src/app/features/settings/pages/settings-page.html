@@ -54,7 +54,7 @@
     <div class="settings-preview-wrap">
       <span class="settings-preview-label">Vista previa en vivo</span>
 
-      <div class="settings-preview" [style]="previewStyles()">
+      <div class="settings-preview" [attr.data-theme]="activeTab()" [style]="previewStyles()">
         <div class="preview-shell">
           <aside class="preview-sidebar">
             <span class="preview-sidebar-brand">A</span>

@@ -1,6 +1,13 @@
-import { Theme } from '../../services/theme';
-import { contrastText, lighten, darken, mix } from '../utils/color.util';
+import { contrastText } from '../utils/color.util';
 
+/**
+ * Colores "base" que el usuario puede personalizar desde la pantalla de
+ * ajustes. El resto de variables del tema (hover, "soft", bordes, texto
+ * apagado, etc.) se derivan automáticamente de estas usando `color-mix()`
+ * directamente en CSS (ver `styles.css`), así que aquí solo vive lo que
+ * CSS no puede resolver por sí solo: el color de texto legible sobre un
+ * fondo elegido por el usuario.
+ */
 export interface ThemeBaseColors {
   primary: string;
   bg: string;
@@ -18,6 +25,7 @@ export interface ThemeColorField {
   hint: string;
 }
 
+/** Metadatos para pintar cada campo de color en la UI, en el orden deseado. */
 export const THEME_COLOR_FIELDS: ThemeColorField[] = [
   { key: 'primary', label: 'Color primario', hint: 'Botones, enlaces y acentos' },
   { key: 'bg', label: 'Fondo general', hint: 'Fondo detrás del contenido' },
@@ -52,56 +60,26 @@ export const DEFAULT_DARK_COLORS: ThemeBaseColors = {
 };
 
 /**
- * Calcula el mapa completo de variables CSS del tema a partir de los
- * colores base elegidos por el usuario y el modo (claro/oscuro) activo.
+ * Variables CSS "base" que hay que fijar en el elemento (inline) para que
+ * las fórmulas `color-mix()` de styles.css calculen el resto del tema.
+ * Solo incluye lo que el usuario elige más los 2 colores de texto de
+ * contraste automático (no se pueden resolver con `color-mix()` puro,
+ * porque dependen de la luminancia del color elegido).
  */
-export function buildThemeCssVars(base: ThemeBaseColors, mode: Theme): Record<string, string> {
-  const surfaceMuted = mix(base.surface, base.bg, 50);
-  const border = mix(base.text, base.surface, mode === 'dark' ? 14 : 10);
-  const textMuted = mix(base.text, base.surface, 55);
-
-  const primaryHover = mode === 'dark' ? lighten(base.primary, 12) : darken(base.primary, 10);
-  const softWeight = mode === 'dark' ? 24 : 10;
-
-  const sidebarTextActive = contrastText(base.sidebarBg);
-  const sidebarText = mix(sidebarTextActive, base.sidebarBg, 65);
-
-  const ngSelectedBg = mode === 'dark' ? base.primary : base.sidebarBg;
-  const ngSelectedText = contrastText(ngSelectedBg);
-  const selectSelectedHoverBg = lighten(ngSelectedBg, 15);
-
+export function buildThemeBaseVars(base: ThemeBaseColors): Record<string, string> {
   return {
     '--bg': base.bg,
     '--surface': base.surface,
-    '--surface-muted': surfaceMuted,
-    '--border': border,
     '--text': base.text,
-    '--text-muted': textMuted,
-
     '--primary': base.primary,
-    '--primary-hover': primaryHover,
-    '--primary-soft': mix(base.primary, base.surface, softWeight),
-    '--primary-color': base.primary,
-
     '--danger': base.danger,
-    '--danger-soft': mix(base.danger, base.surface, softWeight),
     '--success': base.success,
-    '--success-soft': mix(base.success, base.surface, softWeight),
     '--warning': base.warning,
-    '--warning-soft': mix(base.warning, base.surface, softWeight),
-
     '--sidebar-bg': base.sidebarBg,
-    '--sidebar-text': sidebarText,
-    '--sidebar-text-active': sidebarTextActive,
 
-    '--ng-selected-color-bg': ngSelectedBg,
-    '--ng-selected-color-text': ngSelectedText,
-    '--select-selected-hover-bg': selectSelectedHoverBg,
-
-    '--select-bg': base.surface,
-    '--select-border': border,
-    '--select-option-text': base.text,
-    '--select-option-hover-bg': surfaceMuted,
-    '--select-option-hover-text': base.text,
+    // Contraste automático: decide texto blanco o casi-negro según el
+    // color de fondo elegido, para que cualquier color siga siendo legible.
+    '--sidebar-text-active': contrastText(base.sidebarBg),
+    '--primary-contrast': contrastText(base.primary),
   };
 }

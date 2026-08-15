@@ -1,5 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+/**
+ * Campo de color amigable: combina un selector visual nativo
+ * (`<input type="color">`) con un campo de texto para el código hex,
+ * ambos sincronizados. Se usa en la pantalla de personalización de tema.
+ */
 @Component({
   selector: 'app-color-field',
   standalone: true,

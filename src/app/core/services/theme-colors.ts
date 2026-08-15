@@ -4,7 +4,7 @@ import {
   DEFAULT_DARK_COLORS,
   DEFAULT_LIGHT_COLORS,
   ThemeBaseColors,
-  buildThemeCssVars,
+  buildThemeBaseVars,
 } from '../shared/models/theme-palette.model';
 import { normalizeHex } from '../shared/utils/color.util';
 
@@ -27,10 +27,17 @@ function loadStoredPalettes(): StoredPalettes {
       dark: { ...DEFAULT_DARK_COLORS, ...parsed.dark },
     };
   } catch {
+    // localStorage corrupto o inaccesible: se cae a los valores por defecto
+    // sin romper el arranque de la app.
     return { light: { ...DEFAULT_LIGHT_COLORS }, dark: { ...DEFAULT_DARK_COLORS } };
   }
 }
 
+/**
+ * Administra los colores personalizados del tema (uno por modo claro/oscuro),
+ * los persiste en localStorage y los aplica como variables CSS en <html>
+ * cada vez que cambian o cuando cambia el modo activo.
+ */
 @Injectable({ providedIn: 'root' })
 export class ThemeColorsService {
   private themeService = inject(ThemeService);
@@ -41,23 +48,25 @@ export class ThemeColorsService {
   readonly darkColors = signal<ThemeBaseColors>(this.initial.dark);
 
   constructor() {
-    // Aplica las variables CSS del modo activo cada vez que cambian los
-    // colores o el usuario alterna entre claro/oscuro.
+    // Aplica las variables CSS base del modo activo cada vez que cambian
+    // los colores o el usuario alterna entre claro/oscuro. El resto del
+    // tema (hover, "soft", bordes, etc.) lo resuelve CSS con color-mix()
+    // a partir de estas variables, ver styles.css.
     effect(() => {
       const mode = this.themeService.theme();
       const base = mode === 'dark' ? this.darkColors() : this.lightColors();
-      this.applyCssVars(base, mode);
+      this.applyCssVars(base);
     });
 
-    // Persiste ambos paletas en localStorage ante cualquier cambio.
+    // Persiste ambas paletas en localStorage ante cualquier cambio.
     effect(() => {
       const payload: StoredPalettes = { light: this.lightColors(), dark: this.darkColors() };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     });
   }
 
-  private applyCssVars(base: ThemeBaseColors, mode: Theme): void {
-    const vars = buildThemeCssVars(base, mode);
+  private applyCssVars(base: ThemeBaseColors): void {
+    const vars = buildThemeBaseVars(base);
     const root = document.documentElement.style;
     for (const [name, value] of Object.entries(vars)) {
       root.setProperty(name, value);

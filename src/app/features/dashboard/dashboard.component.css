@@ -30,7 +30,7 @@
   height: 30px;
   border-radius: var(--radius-sm);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
 }
 
 .sidebar-brand-name {
-  color: #fff;
+  color: var(--sidebar-text-active);
   font-weight: 600;
   font-size: 15px;
   letter-spacing: -0.01em;

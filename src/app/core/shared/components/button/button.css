@@ -18,7 +18,7 @@
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
 }
 
 .btn-primary:hover:not(:disabled) {

@@ -13,7 +13,10 @@ export class Button {
   variant = input<ButtonVariant>('primary');
   type = input<'button' | 'submit'>('button');
   disabled = input(false);
+  /** Ancho completo, usado en formularios de auth (login/signup). */
   fullWidth = input(false);
+  /** Tooltip nativo, principalmente para variantes icon-*. */
   tooltip = input('');
+
   clicked = output<void>();
 }
