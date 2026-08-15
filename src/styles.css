@@ -148,6 +148,7 @@
 }
 
 .ng-option {
+  margin: 5px 0;
   padding: 0.5rem 0.75rem !important;
   border-radius: var(--radius-sm);
   color: var(--select-option-text);
