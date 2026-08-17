@@ -44,7 +44,6 @@ export class UserForm {
   protected loadingEdit = computed(() => !!this.userId() && this.editUserQuery.isLoading());
 
   constructor() {
-    // La contraseña solo es obligatoria al crear un usuario nuevo.
     effect(() => {
       const passwordControl = this.form.get('password');
       if (this.userId()) {

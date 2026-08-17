@@ -71,7 +71,6 @@
   border-top: 1px solid var(--border);
 }
 
-/* --- Páginas de auth (login / signup) --- */
 
 .auth-page {
   min-height: 100dvh;

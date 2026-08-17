@@ -25,6 +25,15 @@
   background: var(--primary-hover);
 }
 
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 90%, black);
+}
+
 .btn-ghost {
   background: transparent;
   border-color: var(--border);

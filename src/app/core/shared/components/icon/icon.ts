@@ -19,6 +19,8 @@ import {
   faMoon,
   faPalette,
   faRotateLeft,
+  faTriangleExclamation,
+  faChevronRight,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -29,6 +31,7 @@ export type IconName =
   | 'menu'
   | 'close'
   | 'chevron-left'
+  | 'chevron-right'
   | 'logout'
   | 'plus'
   | 'edit'
@@ -41,7 +44,8 @@ export type IconName =
   | 'sun'
   | 'moon'
   | 'palette'
-  | 'undo';
+  | 'undo'
+  | 'warning';
 
 const ICONS: Record<IconName, IconDefinition> = {
   users: faUsers,
@@ -63,6 +67,8 @@ const ICONS: Record<IconName, IconDefinition> = {
   moon: faMoon,
   palette: faPalette,
   undo: faRotateLeft,
+  warning: faTriangleExclamation,
+  'chevron-right': faChevronRight,
 };
 
 @Component({

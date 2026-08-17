@@ -1,0 +1,41 @@
+<div class="sidebar-menu">
+  @for (item of items(); track item.label) {
+    @if (isBranch(item)) {
+      <div>
+        <button
+          type="button"
+          class="sidebar-menu-branch"
+          [class.sidebar-menu-branch-active]="isActive(item)"
+          [style.paddingLeft.px]="indent()"
+          (click)="toggle(item)"
+        >
+          <app-icon [name]="item.icon" [size]="18" />
+          <span class="sidebar-menu-label">{{ item.label }}</span>
+          <app-icon
+            name="chevron-right"
+            [size]="15"
+            class="sidebar-menu-chevron"
+            [class.sidebar-menu-chevron-open]="isOpen(item)"
+          />
+        </button>
+
+        <div class="sidebar-menu-children" [class.sidebar-menu-children-open]="isOpen(item)">
+          <div class="sidebar-menu-children-inner">
+            <app-sidebar-menu [items]="item.children!" [depth]="depth() + 1" (navigate)="onNavigate()" />
+          </div>
+        </div>
+      </div>
+    } @else {
+      <a
+        class="sidebar-menu-link"
+        [routerLink]="item.route"
+        routerLinkActive="sidebar-menu-link-active"
+        [style.paddingLeft.px]="indent()"
+        (click)="onNavigate()"
+      >
+        <app-icon [name]="item.icon" [size]="18" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  }
+</div>

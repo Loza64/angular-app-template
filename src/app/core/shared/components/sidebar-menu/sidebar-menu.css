@@ -1,0 +1,70 @@
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-menu-link,
+.sidebar-menu-branch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.sidebar-menu-link:hover,
+.sidebar-menu-branch:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--sidebar-text-active);
+}
+
+.sidebar-menu-link-active {
+  background: var(--primary);
+  color: var(--sidebar-text-active);
+}
+
+.sidebar-menu-link-active:hover {
+  background: var(--primary);
+}
+
+.sidebar-menu-branch-active {
+  color: var(--sidebar-text-active);
+}
+
+.sidebar-menu-label {
+  flex: 1;
+}
+
+.sidebar-menu-chevron {
+  transition: transform 0.2s ease;
+}
+
+.sidebar-menu-chevron-open {
+  transform: rotate(90deg);
+}
+
+.sidebar-menu-children {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease-out;
+}
+
+.sidebar-menu-children-open {
+  grid-template-rows: 1fr;
+}
+
+.sidebar-menu-children-inner {
+  overflow: hidden;
+}

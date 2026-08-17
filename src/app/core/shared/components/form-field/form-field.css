@@ -13,14 +13,3 @@
   font-weight: 600;
   color: var(--text);
 }
-
-/*
- * El <input>/<select>/<textarea> real lo proporciona quien consume
- * <app-form-field> vía <ng-content>, así que no vive en esta plantilla:
- * con encapsulación emulada, el CSS de este archivo no llega a contenido
- * proyectado (no hay un equivalente estándar a ::part() sin Shadow DOM
- * real). Por eso el estilo del control vive en la clase global
- * `.field-input` (core/shared/styles/utilities.css) — quien use
- * <app-form-field> le pone esa clase al input/select/textarea que
- * proyecta. Ver ese archivo para el detalle.
- */

@@ -1,0 +1,121 @@
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 18, 25, 0.5);
+  padding: 0 16px;
+  animation: fade-in 0.15s ease-out;
+}
+
+.confirm-backdrop-closing {
+  animation: fade-out 0.16s ease-in forwards;
+}
+
+.confirm-panel {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(15, 18, 25, 0.25);
+  animation: rise-in 0.18s ease-out;
+}
+
+.confirm-panel-closing {
+  animation: rise-out 0.16s ease-in forwards;
+}
+
+.confirm-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  animation: icon-pop-in 0.28s ease-out;
+}
+
+.icon-wrap-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.icon-wrap-warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.icon-wrap-primary {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.icon-wrap-success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.confirm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.confirm-text h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.confirm-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.confirm-description:empty {
+  display: none;
+}
+
+.confirm-actions {
+  margin-top: 4px;
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rise-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+
+@keyframes icon-pop-in {
+  0% { opacity: 0; transform: scale(0.5); }
+  60% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}

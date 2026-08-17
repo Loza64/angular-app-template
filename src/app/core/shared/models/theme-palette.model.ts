@@ -1,13 +1,5 @@
 import { contrastText } from '../utils/color.util';
 
-/**
- * Colores "base" que el usuario puede personalizar desde la pantalla de
- * ajustes. El resto de variables del tema (hover, "soft", bordes, texto
- * apagado, etc.) se derivan automáticamente de estas usando `color-mix()`
- * directamente en CSS (ver `styles.css`), así que aquí solo vive lo que
- * CSS no puede resolver por sí solo: el color de texto legible sobre un
- * fondo elegido por el usuario.
- */
 export interface ThemeBaseColors {
   primary: string;
   bg: string;
@@ -25,7 +17,6 @@ export interface ThemeColorField {
   hint: string;
 }
 
-/** Metadatos para pintar cada campo de color en la UI, en el orden deseado. */
 export const THEME_COLOR_FIELDS: ThemeColorField[] = [
   { key: 'primary', label: 'Color primario', hint: 'Botones, enlaces y acentos' },
   { key: 'bg', label: 'Fondo general', hint: 'Fondo detrás del contenido' },
@@ -59,13 +50,6 @@ export const DEFAULT_DARK_COLORS: ThemeBaseColors = {
   warning: '#fbbf24',
 };
 
-/**
- * Variables CSS "base" que hay que fijar en el elemento (inline) para que
- * las fórmulas `color-mix()` de styles.css calculen el resto del tema.
- * Solo incluye lo que el usuario elige más los 2 colores de texto de
- * contraste automático (no se pueden resolver con `color-mix()` puro,
- * porque dependen de la luminancia del color elegido).
- */
 export function buildThemeBaseVars(base: ThemeBaseColors): Record<string, string> {
   return {
     '--bg': base.bg,
@@ -77,8 +61,6 @@ export function buildThemeBaseVars(base: ThemeBaseColors): Record<string, string
     '--warning': base.warning,
     '--sidebar-bg': base.sidebarBg,
 
-    // Contraste automático: decide texto blanco o casi-negro según el
-    // color de fondo elegido, para que cualquier color siga siendo legible.
     '--sidebar-text-active': contrastText(base.sidebarBg),
     '--primary-contrast': contrastText(base.primary),
   };

@@ -68,7 +68,6 @@ export function injectInfiniteFindAll<Entity extends BaseEntity, PageParam = Rec
     enabled: config.enabled ? config.enabled() : true,
   }));
 
-  // ─── Cache helpers ──────────────────────────────────────────────────────────
   const getSafeCache = (old?: InfiniteCache<Entity>): InfiniteCache<Entity> =>
     old ?? { ...(EMPTY_INFINITE_CACHE as InfiniteCache<Entity>) };
 

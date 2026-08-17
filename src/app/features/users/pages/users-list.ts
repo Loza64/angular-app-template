@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
+import { ConfirmModal } from '../../../core/shared/components/confirm-modal/confirm-modal';
 import { Table } from '../../../core/shared/components/table/table';
 import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
 import { Toolbar } from '../../../core/shared/components/toolbar/toolbar';
@@ -16,7 +17,7 @@ import { UserForm } from '../components/user-form/user-form';
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [Icon, Modal, Table, TableCellDirective, UserForm, Toolbar, SearchBox, Button, Badge],
+  imports: [Icon, Modal, ConfirmModal, Table, TableCellDirective, UserForm, Toolbar, SearchBox, Button, Badge],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +62,7 @@ export class UsersList {
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
+  protected userToDelete = signal<User | null>(null);
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -87,8 +89,18 @@ export class UsersList {
   }
 
   remove(user: User): void {
-    if (!confirm(`¿Eliminar al usuario "${user.username}"?`)) return;
-    this.crud.delete({ id: user.id! });
+    this.userToDelete.set(user);
+  }
+
+  async confirmDelete(): Promise<void> {
+    const user = this.userToDelete();
+    if (!user) return;
+    await this.crud.delete({ id: user.id! });
+    this.userToDelete.set(null);
+  }
+
+  cancelDelete(): void {
+    this.userToDelete.set(null);
   }
 
   restore(user: User): void {

@@ -23,7 +23,6 @@
   max-width: 60ch;
 }
 
-/* --- Tabs claro/oscuro --- */
 
 .settings-tabs {
   display: inline-flex;
@@ -70,7 +69,6 @@
   letter-spacing: 0.02em;
 }
 
-/* --- Cuerpo: campos + vista previa --- */
 
 .settings-body {
   display: grid;
@@ -216,7 +214,6 @@
   flex-wrap: wrap;
 }
 
-/* --- Acciones inferiores --- */
 
 .settings-actions {
   display: flex;

@@ -45,3 +45,16 @@
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar usuario' : 'Nuevo usuario'" (closed)="closeModal()">
   <app-user-form [userId]="editingId()" (saved)="onFormSaved()" (cancelled)="closeModal()" />
 </app-modal>
+
+<app-confirm-modal
+  [open]="!!userToDelete()"
+  tone="danger"
+  title="Eliminar usuario"
+  confirmText="Eliminar"
+  cancelText="Cancelar"
+  [loading]="crud.isDeleting()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+>
+  ¿Seguro que quieres eliminar al usuario <strong>{{ userToDelete()?.username }}</strong>?
+</app-confirm-modal>

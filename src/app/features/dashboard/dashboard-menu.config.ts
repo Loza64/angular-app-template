@@ -1,14 +1,14 @@
-import { IconName } from '../../core/shared/components/icon/icon';
-
-export interface MenuItem {
-  label: string;
-  route: string;
-  icon: IconName;
-}
+import { MenuItem } from '../../core/shared/models/menu-item.model';
 
 export const DASHBOARD_MENU: MenuItem[] = [
   { label: 'Usuarios', route: 'users', icon: 'users' },
-  { label: 'Roles', route: 'roles', icon: 'shield' },
-  { label: 'Permisos', route: 'permissions', icon: 'lock' },
+  {
+    label: 'Control de acceso',
+    icon: 'shield',
+    children: [
+      { label: 'Roles', route: 'roles', icon: 'shield' },
+      { label: 'Permisos', route: 'permissions', icon: 'lock' },
+    ],
+  },
   { label: 'Apariencia', route: 'settings', icon: 'palette' },
 ];

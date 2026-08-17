@@ -23,7 +23,6 @@ export class LoginPage {
 
   protected error = signal<string | null>(null);
 
-  // Definición del FormGroup con validaciones nativas
   protected form: FormGroup = this.fb.group({
     username: ['', Validators.required],
     password: ['', Validators.required],

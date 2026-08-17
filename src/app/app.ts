@@ -16,8 +16,6 @@ import { Icon } from './core/shared/components/icon/icon';
 export class App {
   private auth = inject(AuthService);
   protected theme = inject(ThemeService);
-  // Se inyecta aquí (sin usarse directamente en la plantilla) para que las
-  // variables CSS del tema personalizado se apliquen desde el arranque.
   private themeColors = inject(ThemeColorsService);
 
   protected readonly title = signal('admin-panel');

@@ -1,0 +1,43 @@
+@if (mounted()) {
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+  <div
+    class="confirm-backdrop"
+    [class.confirm-backdrop-closing]="closing()"
+    (click)="onCancel()"
+  >
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+    <div
+      class="confirm-panel"
+      [class.confirm-panel-closing]="closing()"
+      (click)="$event.stopPropagation()"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+    >
+      <div class="confirm-icon-wrap" [class]="iconWrapClass()">
+        <app-icon name="warning" [size]="26" />
+      </div>
+
+      <div class="confirm-text">
+        <h2 id="confirm-modal-title">{{ title() }}</h2>
+        <p class="confirm-description">
+          <ng-content />
+        </p>
+      </div>
+
+      <div class="confirm-actions">
+        <app-button variant="ghost" [fullWidth]="true" [disabled]="loading()" (clicked)="onCancel()">
+          {{ cancelText() }}
+        </app-button>
+        <app-button
+          [variant]="confirmVariant()"
+          [fullWidth]="true"
+          [disabled]="loading()"
+          (clicked)="onConfirm()"
+        >
+          {{ loading() ? 'Procesando...' : confirmText() }}
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

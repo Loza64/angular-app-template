@@ -53,29 +53,6 @@
   flex: 1;
 }
 
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  color: var(--sidebar-text);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background 0.12s ease, color 0.12s ease;
-}
-
-.sidebar-link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--sidebar-text-active);
-}
-
-.sidebar-link-active {
-  background: var(--primary);
-  color: var(--sidebar-text-active);
-}
-
 .sidebar-logout {
   display: flex;
   align-items: center;

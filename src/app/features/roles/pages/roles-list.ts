@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Icon } from '../../../core/shared/components/icon/icon';
 import { Modal } from '../../../core/shared/components/modal/modal';
+import { ConfirmModal } from '../../../core/shared/components/confirm-modal/confirm-modal';
 import { Table } from '../../../core/shared/components/table/table';
 import { TableCellDirective, TableColumn } from '../../../core/shared/components/table/table-column.model';
 import { Toolbar } from '../../../core/shared/components/toolbar/toolbar';
@@ -16,7 +17,7 @@ import { RoleForm } from '../components/role-form/role-form';
 @Component({
   selector: 'app-roles-list',
   standalone: true,
-  imports: [Icon, Modal, Table, TableCellDirective, RoleForm, Toolbar, SearchBox, Button, Badge],
+  imports: [Icon, Modal, ConfirmModal, Table, TableCellDirective, RoleForm, Toolbar, SearchBox, Button, Badge],
   templateUrl: './roles-list.html',
   styleUrl: './roles-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +49,6 @@ export class RolesList {
     return p ? { ...p, itemsLabel: 'roles' } : null;
   });
 
-  // Columnas al estilo antd: título + de dónde sacar el valor (dataIndex) o cómo calcularlo (render).
   protected columns: TableColumn<Role>[] = [
     { title: 'Nombre', dataIndex: 'name', key: 'name' },
     { title: 'Permisos', key: 'permissions', render: (_, record) => `${record.permissions?.length ?? 0} permisos` },
@@ -60,6 +60,7 @@ export class RolesList {
 
   protected modalOpen = signal(false);
   protected editingId = signal<string | number | null>(null);
+  protected roleToDelete = signal<Role | null>(null);
 
   onSearch(value: string): void {
     this.search.set(value);
@@ -86,8 +87,18 @@ export class RolesList {
   }
 
   remove(role: Role): void {
-    if (!confirm(`¿Eliminar el rol "${role.name}"?`)) return;
-    this.crud.delete({ id: role.id! });
+    this.roleToDelete.set(role);
+  }
+
+  async confirmDelete(): Promise<void> {
+    const role = this.roleToDelete();
+    if (!role) return;
+    await this.crud.delete({ id: role.id! });
+    this.roleToDelete.set(null);
+  }
+
+  cancelDelete(): void {
+    this.roleToDelete.set(null);
   }
 
   restore(role: Role): void {

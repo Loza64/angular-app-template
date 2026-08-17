@@ -27,17 +27,10 @@ function loadStoredPalettes(): StoredPalettes {
       dark: { ...DEFAULT_DARK_COLORS, ...parsed.dark },
     };
   } catch {
-    // localStorage corrupto o inaccesible: se cae a los valores por defecto
-    // sin romper el arranque de la app.
     return { light: { ...DEFAULT_LIGHT_COLORS }, dark: { ...DEFAULT_DARK_COLORS } };
   }
 }
 
-/**
- * Administra los colores personalizados del tema (uno por modo claro/oscuro),
- * los persiste en localStorage y los aplica como variables CSS en <html>
- * cada vez que cambian o cuando cambia el modo activo.
- */
 @Injectable({ providedIn: 'root' })
 export class ThemeColorsService {
   private themeService = inject(ThemeService);
@@ -48,17 +41,12 @@ export class ThemeColorsService {
   readonly darkColors = signal<ThemeBaseColors>(this.initial.dark);
 
   constructor() {
-    // Aplica las variables CSS base del modo activo cada vez que cambian
-    // los colores o el usuario alterna entre claro/oscuro. El resto del
-    // tema (hover, "soft", bordes, etc.) lo resuelve CSS con color-mix()
-    // a partir de estas variables, ver styles.css.
     effect(() => {
       const mode = this.themeService.theme();
       const base = mode === 'dark' ? this.darkColors() : this.lightColors();
       this.applyCssVars(base);
     });
 
-    // Persiste ambas paletas en localStorage ante cualquier cambio.
     effect(() => {
       const payload: StoredPalettes = { light: this.lightColors(), dark: this.darkColors() };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -73,7 +61,6 @@ export class ThemeColorsService {
     }
   }
 
-  /** Señal de solo lectura con la paleta del modo indicado. */
   palette(mode: Theme) {
     return mode === 'dark' ? this.darkColors : this.lightColors;
   }

@@ -6,17 +6,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      @for (item of menu; track item.route) {
-        <a
-          class="sidebar-link"
-          [routerLink]="item.route"
-          routerLinkActive="sidebar-link-active"
-          (click)="closeSidebar()"
-        >
-          <app-icon [name]="item.icon" [size]="18" />
-          <span>{{ item.label }}</span>
-        </a>
-      }
+      <app-sidebar-menu [items]="menu" (navigate)="closeSidebar()" />
     </nav>
 
     <button type="button" class="sidebar-logout" (click)="logout()">

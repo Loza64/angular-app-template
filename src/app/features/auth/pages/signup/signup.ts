@@ -15,7 +15,6 @@ import { AuthService } from '../../services/auth';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';
 
-// Validador a nivel de grupo: compara password y confirmPassword
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
   const confirmPassword = control.get('confirmPassword')?.value;
@@ -37,7 +36,6 @@ export class SignupPage {
 
   protected error = signal<string | null>(null);
 
-  // Definición del FormGroup con validaciones nativas y validador cruzado de contraseñas
   protected form: FormGroup = this.fb.group(
     {
       username: ['', Validators.required],

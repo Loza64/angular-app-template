@@ -35,7 +35,6 @@ export function injectCrud<Entity extends BaseEntity>(
     },
   });
 
-  // ─── Mutations ──────────────────────────────────────────────────────────────
   const createMutation = injectMutation(() => ({
     mutationFn: (params: CreateParams<Entity>) => service().create(injectConfig(params)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: normalizedQueryKey }),
@@ -56,7 +55,6 @@ export function injectCrud<Entity extends BaseEntity>(
     onSuccess: () => queryClient.invalidateQueries({ queryKey: normalizedQueryKey }),
   }));
 
-  // ─── Queries ────────────────────────────────────────────────────────────────
   const findById = (params: Signal<FindByIdParams>) =>
     injectQuery(() => {
       const value = params();

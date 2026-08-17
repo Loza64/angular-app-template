@@ -14,7 +14,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/signup/signup').then((m) => m.SignupPage),
   },
 
-  // Panel protegido.
   {
     path: 'dashboard',
     canActivate: [authGuard],

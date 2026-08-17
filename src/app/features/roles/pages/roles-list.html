@@ -45,3 +45,16 @@
 <app-modal [open]="modalOpen()" [title]="editingId() ? 'Editar rol' : 'Nuevo rol'" (closed)="closeModal()">
   <app-role-form [roleId]="editingId()" (saved)="onFormSaved()" (cancelled)="closeModal()" />
 </app-modal>
+
+<app-confirm-modal
+  [open]="!!roleToDelete()"
+  tone="danger"
+  title="Eliminar rol"
+  confirmText="Eliminar"
+  cancelText="Cancelar"
+  [loading]="crud.isDeleting()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+>
+  ¿Seguro que quieres eliminar el rol <strong>{{ roleToDelete()?.name }}</strong>?
+</app-confirm-modal>

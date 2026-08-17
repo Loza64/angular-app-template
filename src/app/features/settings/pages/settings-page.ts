@@ -26,18 +26,12 @@ export class SettingsPage {
   protected readonly fields = THEME_COLOR_FIELDS;
   protected readonly activeTheme = this.themeService.theme;
 
-  /** Pestaña que se está editando (claro/oscuro); no tiene que coincidir con el tema activo. */
   protected activeTab = signal<Theme>(this.themeService.theme());
 
   protected currentPalette = computed<ThemeBaseColors>(() =>
     this.activeTab() === 'dark' ? this.themeColorsService.darkColors() : this.themeColorsService.lightColors(),
   );
 
-  /**
-   * Solo las ~10 variables "base" (el resto del tema lo resuelve CSS con
-   * color-mix() en cuanto el div de vista previa lleva el atributo
-   * [data-theme] correspondiente, ver settings-page.html).
-   */
   protected previewStyles = computed(() => buildThemeBaseVars(this.currentPalette()));
 
   selectTab(tab: Theme): void {
