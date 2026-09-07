@@ -1,8 +1,13 @@
 # Documentación Técnica — angular-app-template (Frontend Angular)
 
+> **Backend de prueba:** este frontend está preparado para trabajar con el backend Spring disponible en [`Loza64/spring-app-template`](https://github.com/Loza64/spring-app-template.git).
+>
+> Ejecuta ambos proyectos y configura `apiOrigin` en `src/environments/environment.development.ts` con el origen y puerto del backend. La API debe estar disponible bajo `/api`.
+
 ## Tabla de contenidos
 
 - [1. Resumen del proyecto](#1-resumen-del-proyecto)
+- [1.2 Backend de referencia](#12-backend-de-referencia)
 - [2. Stack tecnológico](#2-stack-tecnológico)
 - [3. Arquitectura general](#3-arquitectura-general)
 - [4. Estructura de carpetas](#4-estructura-de-carpetas)
@@ -34,6 +39,16 @@ El estado remoto (datos del servidor) se gestiona con **TanStack Query** (Angula
 - Módulos de dominio: Usuarios, Roles y Permisos, con listados paginados, búsqueda, alta/edición en modal, borrado lógico y restauración.
 - Componentes UI compartidos: tabla genérica con columnas configurables, modal, selector remoto con búsqueda (`select-api`) e iconos (FontAwesome).
 - Manejo centralizado de caché de queries: al crear/editar/eliminar/restaurar se invalidan o actualizan las queries relacionadas automáticamente.
+
+### 1.2 Backend de referencia
+
+Este proyecto puede utilizarse como frontend para probar el backend Spring. Este es el repositorio:
+
+[https://github.com/Loza64/spring-app-template.git](https://github.com/Loza64/spring-app-template.git)
+
+Para conectar ambos proyectos, ejecuta el backend y configura `apiOrigin` en
+`src/environments/environment.development.ts` con el origen y puerto donde esté
+escuchando la API. El frontend espera los endpoints bajo la ruta `/api`.
 
 ---
 

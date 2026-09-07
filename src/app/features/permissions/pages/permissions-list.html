@@ -1,13 +1,14 @@
 <div class="page">
   <app-toolbar>
     <app-search-box placeholder="Buscar permisos..." [value]="search()" (valueChange)="onSearch($event)" />
-    <span toolbarActions class="hint">Los permisos se generan automáticamente a partir de los endpoints del backend.</span>
+    <span toolbarActions class="hint">Los permisos se generan automáticamente a partir de los endpoints del
+      backend.</span>
   </app-toolbar>
 
   <app-table [columns]="columns" [data]="permissions()" [loading]="permissionsQuery.isLoading()" [rowKey]="'id'"
     emptyText="No se encontraron permisos." [pagination]="pagination()" (pageChange)="goToPage($event)">
-    <ng-template appTableCell="method" let-record>
-      <app-badge variant="neutral">{{ record.method }}</app-badge>
+    <ng-template appTableCell="name" let-record>
+      <app-badge variant="neutral">{{ record.name }}</app-badge>
     </ng-template>
 
     <ng-template appTableCell="actions" let-record>

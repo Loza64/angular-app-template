@@ -83,5 +83,5 @@ export class RoleForm {
     this.form.get('permissions')?.setValue(permissions);
   }
 
-  renderPermission = (item: Permission): string => `${item.title ?? `${item.method.toUpperCase()} ${item.path}`}`;
+  renderPermission = (item: Permission): string => `${item.title ?? item.name}`;
 }

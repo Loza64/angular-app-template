@@ -1,19 +1,12 @@
 <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
-  <app-form-field
-    label="Título"
-    for="permission-title"
-    [error]="form.get('title')?.invalid && form.get('title')?.touched ? 'El título es obligatorio.' : ''"
-  >
+  <app-form-field label="Título" for="permission-title"
+    [error]="form.get('title')?.invalid && form.get('title')?.touched ? 'El título es obligatorio.' : ''">
     <input id="permission-title" class="field-input" type="text" formControlName="title" required />
   </app-form-field>
 
   @if (permission(); as p) {
-  <app-form-field label="Método">
-    <input class="field-input" type="text" [value]="p.method" disabled />
-  </app-form-field>
-
-  <app-form-field label="Ruta">
-    <input class="field-input" type="text" [value]="p.path" disabled />
+  <app-form-field label="Nombre">
+    <input class="field-input" type="text" [value]="p.name" disabled />
   </app-form-field>
   }
 
