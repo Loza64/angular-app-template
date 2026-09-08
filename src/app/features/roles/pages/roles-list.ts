@@ -102,7 +102,7 @@ export class RolesList {
   }
 
   restore(role: Role): void {
-    this.crud.restore({ id: role.id! });
+    void this.crud.restore({ id: role.id! });
   }
 
   goToPage(page: number): void {

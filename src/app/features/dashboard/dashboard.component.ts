@@ -55,6 +55,6 @@ export class DashboardComponent {
 
   logout(): void {
     this.auth.logout();
-    this.router.navigateByUrl('/login');
+    void this.router.navigateByUrl('/login');
   }
 }

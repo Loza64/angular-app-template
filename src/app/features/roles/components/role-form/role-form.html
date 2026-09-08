@@ -12,7 +12,7 @@
 
   <app-form-field label="Permisos">
     <app-select-api [multiple]="true" [service]="permissionService" queryKey="permissions-select"
-      [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value"
+      [queryParams]="{ pageSize: 200 }" [renderOption]="renderPermission" [value]="form.get('permissions')?.value ?? null"
       (valueChange)="onPermissionsChange($event)" placeholder="Selecciona permisos"
       notFoundText="No se encontraron permisos" />
   </app-form-field>

@@ -44,7 +44,11 @@ export class Table<T extends BaseEntity> {
   cellText(column: TableColumn<T>, record: T, index: number): string {
     const value = this.cellValue(column, record);
     if (column.render) return column.render(value, record, index);
-    return value == null ? '' : String(value);
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+      return String(value);
+    }
+    return JSON.stringify(value);
   }
 
   trackByRow = (index: number, record: T): string | number => {

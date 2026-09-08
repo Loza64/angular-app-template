@@ -1,26 +1,27 @@
-import { Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class SdkSettingsService {
+  private errorHandler = inject(ErrorHandler);
   private storage = localStorage;
 
   get token(): string | null { return this.storage.getItem('token'); }
 
   set token(value: string) {
-    try { this.storage.setItem('token', value); } catch (err) { console.warn('Failed to set token', err); }
+    try { this.storage.setItem('token', value); } catch (err) { this.errorHandler.handleError(err); }
   }
 
   removeToken(): void {
-    try { this.storage.removeItem('token'); } catch (err) { console.warn('Failed to remove token', err); }
+    try { this.storage.removeItem('token'); } catch (err) { this.errorHandler.handleError(err); }
   }
 
   get refreshToken(): string | null { return this.storage.getItem('refreshToken'); }
 
   set refreshToken(value: string) {
-    try { this.storage.setItem('refreshToken', value); } catch (err) { console.warn('Failed to set refreshToken', err); }
+    try { this.storage.setItem('refreshToken', value); } catch (err) { this.errorHandler.handleError(err); }
   }
 
   removeRefreshToken(): void {
-    try { this.storage.removeItem('refreshToken'); } catch (err) { console.warn('Failed to remove refreshToken', err); }
+    try { this.storage.removeItem('refreshToken'); } catch (err) { this.errorHandler.handleError(err); }
   }
 }

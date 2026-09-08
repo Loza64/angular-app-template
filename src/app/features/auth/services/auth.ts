@@ -1,11 +1,12 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { environment } from '../../../../environments/environment';
 import { SessionResponse } from '../../../sdk/responses/session-response.model';
 import { User } from '../../users/models/user.model';
 import { SdkSettingsService } from '../../../core/services/sdk-settings';
+import { ON_FORBIDDEN, ON_UNAUTHORIZED } from '../../../core/http/http-context';
 
 export interface SignUpPayload {
   username: string;
@@ -45,7 +46,15 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<SessionResponse> {
     const res = await firstValueFrom(
-      this.http.post<SessionResponse>(`${this.baseUrl}/login`, { username, password }),
+      this.http.post<SessionResponse>(
+        `${this.baseUrl}/login`,
+        { username, password },
+        {
+          context: new HttpContext()
+            .set(ON_UNAUTHORIZED, () => { })
+            .set(ON_FORBIDDEN, () => { }),
+        },
+      ),
     );
     this.setSession(res);
     return res;
@@ -53,7 +62,15 @@ export class AuthService {
 
   async signup(payload: SignUpPayload): Promise<SessionResponse> {
     const res = await firstValueFrom(
-      this.http.post<SessionResponse>(`${this.baseUrl}/signup`, payload),
+      this.http.post<SessionResponse>(
+        `${this.baseUrl}/signup`,
+        payload,
+        {
+          context: new HttpContext()
+            .set(ON_UNAUTHORIZED, () => { })
+            .set(ON_FORBIDDEN, () => { }),
+        },
+      ),
     );
     this.setSession(res);
     return res;

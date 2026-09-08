@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectApi } from '../../../../core/shared/components/select-api/select-api';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';
@@ -18,7 +18,7 @@ import { Permission } from '../../../permissions/models/permission.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoleForm {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private roleService = inject(RoleService);
   protected permissionService = inject(PermissionService);
 
@@ -26,10 +26,10 @@ export class RoleForm {
   saved = output<void>();
   cancelled = output<void>();
 
-  protected form: FormGroup = this.fb.group({
+  protected form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     active: [true],
-    permissions: [[] as Permission[]],
+    permissions: this.fb.control<Permission[]>([]),
   });
 
   protected crud = injectCrud<Role>(signal(this.roleService), { queryKey: 'roles' });
@@ -63,11 +63,11 @@ export class RoleForm {
     const payload: Partial<Role> = {
       name: value.name,
       active: value.active,
-      permissions: (value.permissions ?? []).map((permission: Permission) => ({ id: permission.id }) as Permission),
+      permissions: value.permissions?.map((permission) => ({ id: permission.id }) as Permission),
     };
 
     const id = this.roleId();
-    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload as Role });
+    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload });
 
     request
       .then(() => this.saved.emit())

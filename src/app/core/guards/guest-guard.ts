@@ -8,6 +8,5 @@ export const guestGuard: CanActivateFn = () => {
 
   if (!settings.token) return true;
 
-  router.navigateByUrl('/dashboard');
-  return false;
+  return router.parseUrl('/dashboard');
 };

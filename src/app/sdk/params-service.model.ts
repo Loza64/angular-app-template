@@ -41,7 +41,7 @@ interface PayloadParam<T> extends RequestMeta {
 export type FindAllParams = QueryParams;
 export type FindByIdParams = IdParam;
 export type FindByParams = PathParam;
-export type CreateParams<Entity extends BaseEntity> = PayloadParam<Entity>;
+export type CreateParams<Entity extends BaseEntity> = PayloadParam<Partial<Entity>>;
 export type UpdateParams<Entity extends BaseEntity> = PayloadParam<Partial<Entity>> & { id: string | number };
 export type DeleteParams = IdParam;
 export type RestoreParams = IdParam;

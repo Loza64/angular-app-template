@@ -41,7 +41,7 @@
   }
 
   <app-form-field label="Rol">
-    <app-select-api [service]="roleService" queryKey="roles-select" [value]="form.get('role')?.value"
+    <app-select-api [service]="roleService" queryKey="roles-select" [value]="form.get('role')?.value ?? null"
       (valueChange)="onRoleChange($event)" placeholder="Selecciona un rol" />
   </app-form-field>
 

@@ -2,22 +2,21 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
+  NonNullableFormBuilder,
   Validators,
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { AuthService } from '../../services/auth';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';
+import { getApiErrorMessage } from '../../../../core/shared/utils/api-error.util';
 
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
-  const password = control.get('password')?.value;
-  const confirmPassword = control.get('confirmPassword')?.value;
+  const password = control.get('password')?.value as string | undefined;
+  const confirmPassword = control.get('confirmPassword')?.value as string | undefined;
   return confirmPassword && password !== confirmPassword ? { passwordMismatch: true } : null;
 }
 
@@ -30,13 +29,13 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignupPage {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
   protected error = signal<string | null>(null);
 
-  protected form: FormGroup = this.fb.group(
+  protected form = this.fb.group(
     {
       username: ['', Validators.required],
       name: ['', Validators.required],
@@ -50,12 +49,12 @@ export class SignupPage {
 
   private signupMutation = injectMutation(() => ({
     mutationFn: () => {
-      const { confirmPassword: _confirmPassword, ...payload } = this.form.value;
+      const { confirmPassword: _confirmPassword, ...payload } = this.form.getRawValue();
       return this.authService.signup(payload);
     },
-    onSuccess: () => this.router.navigateByUrl('/dashboard'),
+    onSuccess: () => { void this.router.navigateByUrl('/dashboard'); },
     onError: (err: unknown) => {
-      const message = err instanceof HttpErrorResponse ? (err.error?.message as string | undefined) : undefined;
+      const message = getApiErrorMessage(err);
       this.error.set(message || 'No se pudo crear la cuenta. Revisa los datos e intenta de nuevo.');
     },
   }));

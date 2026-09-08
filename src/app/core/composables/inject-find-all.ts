@@ -49,7 +49,7 @@ export function injectFindAll<Entity extends BaseEntity>(config: InjectFindAllCo
     old ?? { data: [], pagination: { ...EMPTY_PAGINATION } };
 
   const updateCacheData = (updater: (base: QueryData<Entity>) => QueryData<Entity>) => {
-    queryClient.setQueryData<QueryData<Entity>>(finalQueryKey() as unknown as unknown[], (old) =>
+    queryClient.setQueryData<QueryData<Entity>>(finalQueryKey(), (old) =>
       updater(getSafeCache(old)),
     );
   };

@@ -72,7 +72,7 @@ export function injectInfiniteFindAll<Entity extends BaseEntity, PageParam = Rec
     old ?? { ...(EMPTY_INFINITE_CACHE as InfiniteCache<Entity>) };
 
   const updateInfiniteCacheData = (updater: (base: InfiniteCache<Entity>) => InfiniteCache<Entity>) => {
-    queryClient.setQueryData<InfiniteCache<Entity>>(finalQueryKey() as unknown as unknown[], (old) =>
+    queryClient.setQueryData<InfiniteCache<Entity>>(finalQueryKey(), (old) =>
       updater(getSafeCache(old)),
     );
   };

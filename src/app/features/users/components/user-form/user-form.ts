@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectApi } from '../../../../core/shared/components/select-api/select-api';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';
@@ -18,7 +18,7 @@ import { Role } from '../../../roles/models/role.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserForm {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private userService = inject(UserService);
   protected roleService = inject(RoleService);
 
@@ -26,14 +26,14 @@ export class UserForm {
   saved = output<void>();
   cancelled = output<void>();
 
-  protected form: FormGroup = this.fb.group({
+  protected form = this.fb.group({
     username: ['', Validators.required],
     name: [''],
     surname: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     password: [''],
     blocked: [false],
-    role: [null as Role | null],
+    role: this.fb.control<Role | null>(null),
   });
 
   protected crud = injectCrud<User>(signal(this.userService), { queryKey: 'users' });
@@ -89,7 +89,7 @@ export class UserForm {
     if (!this.userId() && value.password) payload.password = value.password;
 
     const id = this.userId();
-    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload as User });
+    const request = id ? this.crud.update({ id, payload }) : this.crud.create({ payload: payload });
 
     request
       .then(() => this.saved.emit())

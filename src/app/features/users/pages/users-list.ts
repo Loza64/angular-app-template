@@ -104,7 +104,7 @@ export class UsersList {
   }
 
   restore(user: User): void {
-    this.crud.restore({ id: user.id! });
+    void this.crud.restore({ id: user.id! });
   }
 
   goToPage(page: number): void {

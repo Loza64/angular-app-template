@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormField } from '../../../../core/shared/components/form-field/form-field';
 import { Button } from '../../../../core/shared/components/button/button';
 import { injectCrud } from '../../../../core/composables/inject-crud';
@@ -15,14 +15,14 @@ import { Permission } from '../../models/permission.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionForm {
-  private fb = inject(FormBuilder);
+  private fb = inject(NonNullableFormBuilder);
   private permissionService = inject(PermissionService);
 
   permission = input<Permission | null>(null);
   saved = output<void>();
   cancelled = output<void>();
 
-  protected form: FormGroup = this.fb.group({ title: ['', [Validators.required, Validators.minLength(2)]] });
+  protected form = this.fb.group({ title: ['', [Validators.required, Validators.minLength(2)]] });
   protected crud = injectCrud<Permission>(signal(this.permissionService), { queryKey: 'permissions' });
   protected saving = this.crud.isUpdating;
   protected formError = signal<string | null>(null);

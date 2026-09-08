@@ -47,7 +47,17 @@ export class PermissionsList {
 
   protected columns: TableColumn<Permission>[] = [
     { title: 'Nombre', dataIndex: 'name', key: 'name' },
-    { title: 'Título', dataIndex: 'title', key: 'title', render: (value) => (value == null ? 'N/A' : String(value)) },
+    {
+      title: 'Título',
+      dataIndex: 'title',
+      key: 'title',
+      render: (value) => {
+        if (value == null) return 'N/A';
+        if (typeof value === 'string') return value;
+        if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') return String(value);
+        return JSON.stringify(value);
+      },
+    },
     { title: '', key: 'actions', width: '60px' },
   ];
 
